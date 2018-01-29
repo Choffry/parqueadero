@@ -1,0 +1,50 @@
+package com.example.demo;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.example.demo.controladores.ControladorEntradas;
+
+public class ControladorEntradasTest {
+
+	@Test
+	public void testVerificarPlaca() {
+		ControladorEntradas controlador = new ControladorEntradas("Carro", "AAA123");
+        String resultado = controlador.verificarPlaca("Lunes");
+        String resultado1 = controlador.verificarPlaca("Domingo");
+        String resultado2 = controlador.verificarPlaca("Miercoles");
+        assertEquals("Bienvenido", resultado);
+        assertEquals("Bienvenido", resultado1);
+        assertEquals("Acceso denegado", resultado2);
+
+        ControladorEntradas controlador1 = new ControladorEntradas("Carro", "BAA123");
+        resultado = controlador1.verificarPlaca("Lunes");
+        resultado1 = controlador1.verificarPlaca("Domingo");
+        resultado2 = controlador1.verificarPlaca("Miercoles");
+        assertEquals("Bienvenido", resultado);
+        assertEquals("Bienvenido", resultado1);
+        assertEquals("Bienvenido", resultado2);
+	}
+
+	@Test
+	public void testVerificarDisponibilidad() {
+		ControladorEntradas controlador = new ControladorEntradas("Carro", "AAA123");
+		ControladorEntradas controlador1 = new ControladorEntradas("Moto", "AAA123");
+        String resultado = controlador.verificarDisponibilidad();
+        String resultado1 = controlador1.verificarDisponibilidad();
+        assertEquals("No hay cupos para carros", resultado);
+        assertEquals("Puede ingresar el vehiculo", resultado1);
+	}
+	
+	@Test
+	public void testAgregarCarro() {
+		ControladorEntradas controlador = new ControladorEntradas("Carro", "AAA123");
+		controlador.agregarvehiculo("Carro", "AAA123");
+		controlador.agregarvehiculo("Carro", "AAB123");
+		controlador.agregarvehiculo("Carro", "BAA123");
+		int resultado = controlador.cantidadCupos("Carro");
+		assertEquals(resultado, 17);
+	}
+
+}

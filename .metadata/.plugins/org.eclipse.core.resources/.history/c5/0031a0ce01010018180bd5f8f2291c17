@@ -1,0 +1,27 @@
+package com.example.demo;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import com.example.demo.Parqueadero;
+
+public class ParqueaderoTest {
+
+	@Test
+	public void testAgregarvehiculo() {
+		Parqueadero parqueadero = new Parqueadero();
+        parqueadero.agregarvehiculo("Carro");
+        int resultado = parqueadero.getCeldasCarro();
+        assertEquals(19, resultado);
+	}
+	
+	@Test
+	public void testSacarVehiculo() {
+		Parqueadero parqueadero = new Parqueadero();
+        parqueadero.agregarvehiculo("Carro");
+        parqueadero.sacarVehiculo("Carro");
+        int resultado = parqueadero.getCeldasCarro();
+        assertEquals(20, resultado);
+	}
+
+}

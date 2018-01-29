@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+servers/sonar.ceiba.com.co/auth=true
+servers/sonar.ceiba.com.co/notificationsEnabled=false
+servers/sonar.ceiba.com.co/url=https\://sonar.ceiba.com.co
