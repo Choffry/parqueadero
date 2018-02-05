@@ -1,30 +1,23 @@
 package com.parqueadero.models;
 
-import java.util.Date;
-
 public class Vehiculo {
 	
 	private int idVehiculo;
 	private String tipoVehiculo;
 	private String placa;
     private int cilindraje;
-    private Date horaIngreso;
-    private Date horaSalida;
     private boolean estado;
     
     public Vehiculo() {
 	
 	}
     
-	public Vehiculo(int idVehiculo, String tipoVehiculo, String placa, int cilindraje, Date horaIngreso,
-			Date horaSalida, boolean estado) {
+	public Vehiculo(int idVehiculo, String tipoVehiculo, String placa, int cilindraje, boolean estado) {
 		super();
 		this.idVehiculo = idVehiculo;
 		this.tipoVehiculo = tipoVehiculo;
 		this.placa = placa;
 		this.cilindraje = cilindraje;
-		this.horaIngreso = horaIngreso;
-		this.horaSalida = horaSalida;
 		this.estado = estado;
 	}
 
@@ -60,22 +53,6 @@ public class Vehiculo {
 		this.cilindraje = cilindraje;
 	}
 
-	public Date getHoraIngreso() {
-		return horaIngreso;
-	}
-
-	public void setHoraIngreso(Date horaIngreso) {
-		this.horaIngreso = horaIngreso;
-	}
-
-	public Date getHoraSalida() {
-		return horaSalida;
-	}
-
-	public void setHoraSalida(Date horaSalida) {
-		this.horaSalida = horaSalida;
-	}
-
 	public boolean isEstado() {
 		return estado;
 	}
@@ -87,8 +64,7 @@ public class Vehiculo {
 	@Override
 	public String toString() {
 		return "Vehiculo [idVehiculo=" + idVehiculo + ", tipoVehiculo=" + tipoVehiculo + ", placa=" + placa
-				+ ", cilindraje=" + cilindraje + ", horaIngreso=" + horaIngreso + ", horaSalida=" + horaSalida
-				+ ", estado=" + estado + "]";
+				+ ", cilindraje=" + cilindraje + ", estado=" + estado + "]";
 	}
 	
 }
