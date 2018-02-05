@@ -4,9 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import controladores.ControladorEntradas;
+import com.parqueadero.controllers.ControladorEntradas;
+
 
 public class ControladorEntradasTest {
+	
 
 	@Test
 	public void testVerificarPlaca() {

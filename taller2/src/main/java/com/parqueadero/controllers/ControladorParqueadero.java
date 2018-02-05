@@ -1,4 +1,4 @@
-package controladores;
+package com.parqueadero.controllers;
 
 public class ControladorParqueadero {
 

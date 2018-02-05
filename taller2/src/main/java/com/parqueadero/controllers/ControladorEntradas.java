@@ -1,11 +1,11 @@
-package controladores;
+package com.parqueadero.controllers;
 
-import com.example.demo.Parqueadero;
+import com.parqueadero.models.Parqueadero;
 
 public class ControladorEntradas {
 	private String vehiculo;
     private String placa;
-    private Parqueadero parqueadero = new Parqueadero();
+    private Parqueadero parqueadero = new Parqueadero(20, 10, 1000, 500, 8000, 4000);
     private String carro = "Carro";
 
     public ControladorEntradas(String vehiculo, String placa) {

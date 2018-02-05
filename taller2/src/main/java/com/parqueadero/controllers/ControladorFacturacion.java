@@ -1,6 +1,6 @@
-package controladores;
+package com.parqueadero.controllers;
 
-import com.example.demo.Parqueadero;
+import com.parqueadero.models.Parqueadero;
 
 public class ControladorFacturacion {
 	private String placa;
@@ -14,7 +14,7 @@ public class ControladorFacturacion {
     }
 
     public int generarPago(String tipo, int horas, int dias, int cilindraje){
-        Parqueadero parqueadero = new Parqueadero();
+        Parqueadero parqueadero = new Parqueadero(20, 10, 1000, 500, 8000, 4000);
         int pagoTotal = 0;
         if (tipo.equals("Carro")){
             pagoTotal += parqueadero.getPrecioHoraCarro()*horas;
