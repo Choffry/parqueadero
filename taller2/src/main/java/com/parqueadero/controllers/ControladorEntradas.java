@@ -1,17 +1,17 @@
 package com.parqueadero.controllers;
 
-import com.parqueadero.models.Parqueadero;
+import com.parqueadero.entities.ParqueaderoEntity;
 
 public class ControladorEntradas {
 	private String vehiculo;
     private String placa;
-    private Parqueadero parqueadero;
+    private ParqueaderoEntity parqueadero;
     private String carro = "Carro";
     private String moto = "Moto";
     
 
     public ControladorEntradas(String vehiculo, String placa) {
-    	parqueadero = new Parqueadero(20, 10, 1000, 500, 8000, 4000);
+    	parqueadero = new ParqueaderoEntity(1, 20, 10, 1000, 500, 8000, 4000);
         this.vehiculo = vehiculo;
         this.placa = placa;
     }
@@ -26,9 +26,9 @@ public class ControladorEntradas {
     }
 
     public String verificarDisponibilidad(){
-        if (vehiculo.equals(carro) && parqueadero.getCeldasCarro()==0){
+        if (vehiculo.equals(carro) && parqueadero.getNumCeldasCarro()==0){
             return "No hay cupos para carros";
-        }else if (vehiculo.equals(moto) && parqueadero.getCeldasMoto() == 0){
+        }else if (vehiculo.equals(moto) && parqueadero.getNumCeldasMoto() == 0){
             return "No hay cupos para motos";
         }else {
             return "Puede ingresar el vehiculo";
@@ -37,25 +37,25 @@ public class ControladorEntradas {
     
     public void agregarvehiculo(String tipoVehiculo){
         if (tipoVehiculo.equals(carro)){
-            parqueadero.setCeldasCarro(parqueadero.getCeldasCarro()-1);
+            parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
         }else{
-            parqueadero.setCeldasMoto(parqueadero.getCeldasMoto()-1);
+            parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()-1);
         }
     }
 
     public void sacarVehiculo(String tipoVehiculo){
         if (tipoVehiculo.equals(carro)){
-            parqueadero.setCeldasCarro(parqueadero.getCeldasCarro()+1);
+            parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+1);
         }else{
-            parqueadero.setCeldasMoto(parqueadero.getCeldasMoto()+1);
+            parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()+1);
         }
     }
     
     public int cantidadCupos(String tipoVehiculo) {
     	if (tipoVehiculo.equals(carro)) {
-    		return parqueadero.getCeldasCarro();
+    		return parqueadero.getNumCeldasCarro();
     	}else {
-    		return parqueadero.getCeldasMoto();
+    		return parqueadero.getNumCeldasMoto();
     	}
     }
 }

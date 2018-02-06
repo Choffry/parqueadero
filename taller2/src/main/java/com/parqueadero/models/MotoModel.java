@@ -1,38 +1,24 @@
-package com.parqueadero.entities;
+package com.parqueadero.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="moto")
-public class MotoEntity {
- 
-	@Id
-	@GeneratedValue
-	@Column(name="idMoto")
+public class MotoModel {
+	
 	private int idMoto;
-	@Column(name="placa")
 	private String placa;
-	@Column(name="cilindraje")
-	private int cilindraje;
-	@Column(name="estado")
-	private boolean estado;
+    private int cilindraje;
+    private boolean estado;
+    
+    public MotoModel() {
 	
-	public MotoEntity() {
-		
 	}
-	
-	public MotoEntity(int idMoto, String placa, int cilindraje, boolean estado) {
+    
+	public MotoModel(int idMoto, String placa, int cilindraje, boolean estado) {
 		super();
 		this.idMoto = idMoto;
 		this.placa = placa;
 		this.cilindraje = cilindraje;
 		this.estado = estado;
 	}
-
+	
 	public int getIdMoto() {
 		return idMoto;
 	}
@@ -64,4 +50,10 @@ public class MotoEntity {
 	public void setEstado(boolean estado) {
 		this.estado = estado;
 	}
+
+	@Override
+	public String toString() {
+		return "Moto [idMoto=" + idMoto + ", placa=" + placa + ", cilindraje=" + cilindraje + ", estado=" + estado
+				+ "]";
+	}	
 }
