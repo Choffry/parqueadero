@@ -1,4 +1,4 @@
-package com.parqueadero.components;
+package com.parqueadero.converters;
 
 import org.springframework.stereotype.Component;
 

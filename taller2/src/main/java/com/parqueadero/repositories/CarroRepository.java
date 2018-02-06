@@ -9,5 +9,5 @@ import com.parqueadero.entities.CarroEntity;
 
 @Repository("carroRepository")
 public interface CarroRepository extends JpaRepository<CarroEntity, Serializable> {
-
+	public abstract CarroEntity findByIdCarro(int idCarro);
 }

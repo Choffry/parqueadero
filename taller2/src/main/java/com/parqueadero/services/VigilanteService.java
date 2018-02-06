@@ -1,5 +1,12 @@
 package com.parqueadero.services;
 
-public interface VigilanteService {
+import com.parqueadero.entities.CarroEntity;
+import com.parqueadero.models.CarroModel;
 
+public interface VigilanteService {
+	public CarroModel addCarro(CarroModel carroModel);
+
+	CarroEntity findCarroById(int idCarro);
+
+	CarroModel findContactByIdModel(int idCarro);
 }
