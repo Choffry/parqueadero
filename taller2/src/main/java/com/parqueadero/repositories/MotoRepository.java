@@ -5,9 +5,9 @@ import java.io.Serializable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.parqueadero.entities.RegistroEntity;
+import com.parqueadero.entities.MotoEntity;
 
-@Repository("registroReposiory")
-public interface RegistroReposiory extends JpaRepository<RegistroEntity, Serializable> {
+@Repository("motoRepository")
+public interface MotoRepository extends JpaRepository<MotoEntity, Serializable>{
 
 }

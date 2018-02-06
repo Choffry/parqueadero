@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="registros")
-public class RegistroEntity {
+@Table(name="factura")
+public class FacturaEntity {
 	
 	@Id
 	@GeneratedValue
@@ -31,11 +31,11 @@ public class RegistroEntity {
 	@Column(name="pagoTotal")
 	private int pagoTotal;
 	
-	public RegistroEntity() {
+	public FacturaEntity() {
 		
 	}
 	
-	public RegistroEntity(int idRegistro, String tipoVehiculo, String placa, int cilindraje, Date horaIngreso,
+	public FacturaEntity(int idRegistro, String tipoVehiculo, String placa, int cilindraje, Date horaIngreso,
 			Date horaSalida, boolean estado, int pagoTotal) {
 		super();
 		this.idRegistro = idRegistro;
