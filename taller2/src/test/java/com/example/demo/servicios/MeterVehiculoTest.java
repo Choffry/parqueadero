@@ -26,7 +26,15 @@ public class MeterVehiculoTest {
 	public void testVerificarPlaca() {
 		Calendario calendario = Mockito.mock(Calendario.class);
 		Mockito.when(calendario.getActualDay()).thenReturn(Calendar.TUESDAY);
-		boolean respuesta = meterVehiculo.verificarPlaca(carroModel);
+		boolean respuesta = meterVehiculo.verificarPlaca(carroModel, calendario.getActualDay());
 		assertEquals(true, respuesta);
+	}
+	
+	@Test
+	public void testVerificarPlaca2() {
+		Calendario calendario = Mockito.mock(Calendario.class);
+		Mockito.when(calendario.getActualDay()).thenReturn(Calendar.MONDAY);
+		boolean respuesta = meterVehiculo.verificarPlaca(carroModel, calendario.getActualDay());
+		assertEquals(false, respuesta);
 	}
 }

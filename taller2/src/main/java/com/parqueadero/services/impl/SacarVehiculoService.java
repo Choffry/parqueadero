@@ -1,7 +1,6 @@
 package com.parqueadero.services.impl;
 
 import com.parqueadero.entities.CarroEntity;
-import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.CarroModel;
 import com.parqueadero.services.VigilanteService;
 
@@ -23,12 +22,12 @@ public class SacarVehiculoService implements VigilanteService{
 	}
 
 	@Override
-	public boolean verificarPlaca(CarroModel carroModel) {
+	public boolean verificarPlaca(CarroModel carroModel, int dia) {
 		return false;
 	}
 
 	@Override
-	public boolean verificarDisponibilidad(ParqueaderoEntity parqueaderoEntity) {
+	public boolean verificarDisponibilidad() {
 		return false;
 	}
 	
