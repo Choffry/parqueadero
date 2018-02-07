@@ -25,6 +25,8 @@ public class CarroController {
 	@PostMapping("/addCarro")
 	public void addCarro(@RequestBody CarroModel carroModel) {
 		LOG.info("METHOD: addContact() -- PARAMS: " + carroModel.toString());
-		vigilante.addCarro(carroModel);
+		if(vigilante.verificarPlaca(carroModel)) {
+			vigilante.addCarro(carroModel);
+		}
 	}
 }

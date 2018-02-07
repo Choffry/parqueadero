@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.parqueadero.converters.CarroConverter;
 import com.parqueadero.converters.MotoConverter;
 import com.parqueadero.entities.CarroEntity;
+import com.parqueadero.entities.ParqueaderoEntity;
+import com.parqueadero.models.Calendario;
 import com.parqueadero.models.CarroModel;
 import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
@@ -48,6 +50,26 @@ public class MeterVehiculoService implements VigilanteService{
 	}
 	
 	@Override
+	public boolean verificarPlaca(CarroModel carroModel){
+		Calendario calendario = new Calendario();
+		int dia = calendario.getActualDay();
+		String placa = carroModel.getPlaca();
+        char primeraLetra = placa.charAt(0);
+        if (primeraLetra == 'A') { 
+        	if (1 == dia || 0 == dia){
+        		return false;
+        	}
+        	return true;
+        }
+        return true;
+    }
+	
+	@Override
+	public boolean verificarDisponibilidad(ParqueaderoEntity parqueaderoEntity) {
+		return false;
+	}
+	
+	@Override
 	public CarroEntity findCarroById(int idCarro) {
 		return carroRepository.findByIdCarro(idCarro);
 	}
@@ -55,5 +77,5 @@ public class MeterVehiculoService implements VigilanteService{
 	@Override
 	public CarroModel findContactByIdModel(int idCarro) {
 		return carroConverter.entity2model(findCarroById(idCarro));
-	}
+	}	
 }

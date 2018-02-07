@@ -1,7 +1,5 @@
 package com.parqueadero.entities;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,8 +12,8 @@ public class FacturaEntity {
 	
 	@Id
 	@GeneratedValue
-	@Column(name="idRegistro")
-	private int idRegistro;
+	@Column(name="idFactura")
+	private int idFactura;
 	@Column(name="tipoVehiculo")
 	private String tipoVehiculo;
 	@Column(name="placa")
@@ -23,9 +21,9 @@ public class FacturaEntity {
 	@Column(name="cilindraje")
 	private int cilindraje;
 	@Column(name="horaIngreso")
-	private Date horaIngreso;
+	private int horaIngreso;
 	@Column(name="horaSalida")
-	private Date horaSalida;
+	private int horaSalida;
 	@Column(name="estado")
 	private boolean estado;
 	@Column(name="pagoTotal")
@@ -35,10 +33,10 @@ public class FacturaEntity {
 		
 	}
 	
-	public FacturaEntity(int idRegistro, String tipoVehiculo, String placa, int cilindraje, Date horaIngreso,
-			Date horaSalida, boolean estado, int pagoTotal) {
+	public FacturaEntity(int idFactura, String tipoVehiculo, String placa, int cilindraje, int horaIngreso,
+			int horaSalida, boolean estado, int pagoTotal) {
 		super();
-		this.idRegistro = idRegistro;
+		this.idFactura = idFactura;
 		this.tipoVehiculo = tipoVehiculo;
 		this.placa = placa;
 		this.cilindraje = cilindraje;
@@ -48,12 +46,12 @@ public class FacturaEntity {
 		this.pagoTotal = pagoTotal;
 	}
 
-	public int getIdRegistro() {
-		return idRegistro;
+	public int getIdFactura() {
+		return idFactura;
 	}
 
-	public void setIdRegistro(int idRegistro) {
-		this.idRegistro = idRegistro;
+	public void setIdFactura(int idRegistro) {
+		this.idFactura = idRegistro;
 	}
 
 	public String getTipoVehiculo() {
@@ -80,19 +78,19 @@ public class FacturaEntity {
 		this.cilindraje = cilindraje;
 	}
 
-	public Date getHoraIngreso() {
+	public int getHoraIngreso() {
 		return horaIngreso;
 	}
 
-	public void setHoraIngreso(Date horaIngreso) {
+	public void setHoraIngreso(int horaIngreso) {
 		this.horaIngreso = horaIngreso;
 	}
 
-	public Date getHoraSalida() {
+	public int getHoraSalida() {
 		return horaSalida;
 	}
 
-	public void setHoraSalida(Date horaSalida) {
+	public void setHoraSalida(int horaSalida) {
 		this.horaSalida = horaSalida;
 	}
 
