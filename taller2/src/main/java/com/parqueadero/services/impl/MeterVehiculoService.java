@@ -54,12 +54,12 @@ public class MeterVehiculoService implements VigilanteService{
         char primeraLetra = placa.charAt(0);
         if (primeraLetra == 'A') { 
         	if ((1 == dia) || (2 == dia)){
-        		return false;
-        	}else {
         		return true;
+        	}else {
+        		return false;
         	}        	
         }
-        return true;
+        return false;
     }
 	
 	@Override
