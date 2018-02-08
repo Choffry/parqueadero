@@ -1,10 +1,14 @@
 package com.parqueadero.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="factura")
@@ -20,10 +24,12 @@ public class FacturaEntity {
 	private String placa;
 	@Column(name="cilindraje")
 	private int cilindraje;
-	@Column(name="horaIngreso")
-	private int horaIngreso;
-	@Column(name="horaSalida")
-	private int horaSalida;
+	@Column(name="horaIngreso", columnDefinition="DATETIME")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date horaIngreso;
+	@Column(name="horaSalida", columnDefinition="DATETIME")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date horaSalida;
 	@Column(name="estado")
 	private boolean estado;
 	@Column(name="pagoTotal")
@@ -33,8 +39,8 @@ public class FacturaEntity {
 		
 	}
 	
-	public FacturaEntity(int idFactura, String tipoVehiculo, String placa, int cilindraje, int horaIngreso,
-			int horaSalida, boolean estado, int pagoTotal) {
+	public FacturaEntity(int idFactura, String tipoVehiculo, String placa, int cilindraje, Date horaIngreso,
+			Date horaSalida, boolean estado, int pagoTotal) {
 		super();
 		this.idFactura = idFactura;
 		this.tipoVehiculo = tipoVehiculo;
@@ -78,19 +84,19 @@ public class FacturaEntity {
 		this.cilindraje = cilindraje;
 	}
 
-	public int getHoraIngreso() {
+	public Date getHoraIngreso() {
 		return horaIngreso;
 	}
 
-	public void setHoraIngreso(int horaIngreso) {
+	public void setHoraIngreso(Date horaIngreso) {
 		this.horaIngreso = horaIngreso;
 	}
 
-	public int getHoraSalida() {
+	public Date getHoraSalida() {
 		return horaSalida;
 	}
 
-	public void setHoraSalida(int horaSalida) {
+	public void setHoraSalida(Date horaSalida) {
 		this.horaSalida = horaSalida;
 	}
 

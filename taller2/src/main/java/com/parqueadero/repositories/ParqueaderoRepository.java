@@ -9,5 +9,5 @@ import com.parqueadero.entities.ParqueaderoEntity;
 
 @Repository("parqueaderoRepository")
 public interface ParqueaderoRepository extends JpaRepository<ParqueaderoEntity, Serializable>{
-
+	public ParqueaderoEntity findByIdParqueadero(int idParqueadero);
 }

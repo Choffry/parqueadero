@@ -16,18 +16,15 @@ public class CarroEntity {
 	private int idCarro;
 	@Column(name="placa")
 	private String placa;
-	@Column(name="estado")
-	private boolean estado;
 	
 	public CarroEntity() {
 		
 	}
 	
-	public CarroEntity(int idCarro, String placa, boolean estado) {
+	public CarroEntity(int idCarro, String placa) {
 		super();
 		this.idCarro = idCarro;
 		this.placa = placa;
-		this.estado = estado;
 	}
 
 	public int getIdCarro() {
@@ -44,13 +41,5 @@ public class CarroEntity {
 
 	public void setPlaca(String placa) {
 		this.placa = placa;
-	}
-
-	public boolean isEstado() {
-		return estado;
-	}
-
-	public void setEstado(boolean estado) {
-		this.estado = estado;
 	}
 }

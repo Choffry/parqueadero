@@ -12,7 +12,6 @@ public class CarroConverter {
 		CarroEntity carroEntity = new CarroEntity();
 		carroEntity.setIdCarro(carroModel.getIdCarro());
 		carroEntity.setPlaca(carroModel.getPlaca());
-		carroEntity.setEstado(carroModel.isEstado());
 		return carroEntity;
 	}
 	
@@ -20,7 +19,6 @@ public class CarroConverter {
 		CarroModel carroModel = new CarroModel();
 		carroModel.setIdCarro(carroEntity.getIdCarro());
 		carroModel.setPlaca(carroEntity.getPlaca());
-		carroModel.setEstado(carroEntity.isEstado());
 		return carroModel;
 	}
 }

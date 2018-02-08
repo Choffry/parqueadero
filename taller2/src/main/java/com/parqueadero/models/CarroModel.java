@@ -4,17 +4,15 @@ public class CarroModel {
 	
 	private int idCarro;
 	private String placa;
-	private boolean estado;
 	
 	public CarroModel() {
 		
 	}
 	
-	public CarroModel(int idCarro, String placa, boolean estado) {
+	public CarroModel(int idCarro, String placa) {
 		super();
 		this.idCarro = idCarro;
 		this.placa = placa;
-		this.estado = estado;
 	}
 
 	public int getIdCarro() {
@@ -33,16 +31,8 @@ public class CarroModel {
 		this.placa = placa;
 	}
 
-	public boolean isEstado() {
-		return estado;
-	}
-
-	public void setEstado(boolean estado) {
-		this.estado = estado;
-	}
-
 	@Override
 	public String toString() {
-		return "Carro [idCarro=" + idCarro + ", placa=" + placa + ", estado=" + estado + "]";
+		return "Carro [idCarro=" + idCarro + ", placa=" + placa + "]";
 	}
 }

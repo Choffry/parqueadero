@@ -1,14 +1,17 @@
 package com.parqueadero.services.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.parqueadero.converters.CarroConverter;
 import com.parqueadero.converters.MotoConverter;
-import com.parqueadero.entities.CarroEntity;
+import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.CarroModel;
+import com.parqueadero.models.MotoModel;
 import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.MotoRepository;
@@ -43,9 +46,18 @@ public class MeterVehiculoService implements VigilanteService{
 	private MotoConverter motoConverter;
 
 	@Override
-	public CarroModel addCarro(CarroModel carroModel) {
-		CarroEntity carro = carroRepository.save(carroConverter.model2entity(carroModel));
-		return carroConverter.entity2model(carro);
+	public void addCarro(CarroModel carroModel) {
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
+		parqueaderoRepository.save(parqueadero);
+		comenzarFactura(carroModel);
+		carroRepository.save(carroConverter.model2entity(carroModel));
+	}
+	
+	@Override
+	public void addMoto(MotoModel motoModel) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
@@ -53,29 +65,28 @@ public class MeterVehiculoService implements VigilanteService{
 		String placa = carroModel.getPlaca();
         char primeraLetra = placa.charAt(0);
         if (primeraLetra == 'A') { 
-        	if ((1 == dia) || (2 == dia)){
-        		return true;
-        	}else {
-        		return false;
-        	}        	
+        	return (1 == dia) || (2 == dia);        	
         }
-        return false;
+        return true;
     }
 	
 	@Override
 	public boolean verificarDisponibilidad() {
-		ParqueaderoEntity parqueadero = new ParqueaderoEntity();
-		int celdasDisponibles = parqueadero.getNumCeldasCarro();
-		return celdasDisponibles == 0;
+		return (celdasParqueadero(1)!=0);
 	}
 	
-	@Override
-	public CarroEntity findCarroById(int idCarro) {
-		return carroRepository.findByIdCarro(idCarro);
+	public int celdasParqueadero(int idParqueadero) {		
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
+		return parqueadero.getNumCeldasCarro();
 	}
 	
-	@Override
-	public CarroModel findContactByIdModel(int idCarro) {
-		return carroConverter.entity2model(findCarroById(idCarro));
-	}	
+	public void comenzarFactura(CarroModel carroModel) {
+		Date fechaInicio = new Date();
+		FacturaEntity factura = new FacturaEntity();
+		factura.setEstado(true);
+		factura.setPlaca(carroModel.getPlaca());
+		factura.setTipoVehiculo("Carro");
+		factura.setHoraIngreso(fechaInicio);
+		facturaReposiory.save(factura);
+	}
 }

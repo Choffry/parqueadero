@@ -12,7 +12,6 @@ public class MotoConverter {
 		motoEntity.setIdMoto(motoModel.getIdMoto());
 		motoEntity.setPlaca(motoModel.getPlaca());
 		motoEntity.setCilindraje(motoModel.getCilindraje());
-		motoEntity.setEstado(motoModel.isEstado());
 		return motoEntity;
 	}
 	
@@ -21,7 +20,6 @@ public class MotoConverter {
 		motoModel.setIdMoto(motoEntity.getIdMoto());
 		motoModel.setPlaca(motoEntity.getPlaca());
 		motoModel.setCilindraje(motoEntity.getCilindraje());
-		motoModel.setEstado(motoEntity.isEstado());
 		return motoModel;
 	}
 }

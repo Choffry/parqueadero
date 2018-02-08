@@ -3,7 +3,7 @@ package com.parqueadero.controllers;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;	
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +29,16 @@ public class CarroController {
 	@PostMapping("/addCarro")
 	public void addCarro(@RequestBody CarroModel carroModel) {
 		LOG.info("METHOD: addContact() -- PARAMS: " + carroModel.toString());
-		if(vigilante.verificarPlaca(carroModel, dia)) {
+		if(vigilante.verificarPlaca(carroModel, dia) && vigilante.verificarDisponibilidad()) {		
 			vigilante.addCarro(carroModel);
+			LOG.info("Carro ingresado");
+		}else {
+			LOG.info("Acceso denegado");
 		}
+	}
+	
+	@PostMapping("/numCeldas")
+	public boolean numCeldas() {
+		return vigilante.verificarDisponibilidad();
 	}
 }
