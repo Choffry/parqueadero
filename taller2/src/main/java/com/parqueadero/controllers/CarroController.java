@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.models.Calendario;
-import com.parqueadero.models.CarroModel;
+import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.services.VigilanteService;
 
 @RestController
@@ -19,6 +19,7 @@ public class CarroController {
 	
 	Calendario calendario = new Calendario();
 	int dia = calendario.getActualDay();
+	private static final String CARRO = "Carro";
 	
 	private static final Log LOG = LogFactory.getLog(CarroController.class);
 	
@@ -26,11 +27,11 @@ public class CarroController {
 	@Qualifier("meterVehiculoService")
 	private VigilanteService vigilante;
 	
-	@PostMapping("/addCarro")
-	public void addCarro(@RequestBody CarroModel carroModel) {
-		LOG.info("METHOD: addContact() -- PARAMS: " + carroModel.toString());
-		if(vigilante.verificarPlaca(carroModel, dia) && vigilante.verificarDisponibilidad()) {		
-			vigilante.addCarro(carroModel);
+	@PostMapping("/addVehiculo")
+	public void addCarro(@RequestBody VehiculoModel vehiculoModel) {
+		LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
+		if(vigilante.verificarPlaca(vehiculoModel, dia) && vigilante.verificarDisponibilidad(CARRO)) {		
+			vigilante.addVehiculo(vehiculoModel, CARRO, 1);
 			LOG.info("Carro ingresado");
 		}else {
 			LOG.info("Acceso denegado");
@@ -39,6 +40,6 @@ public class CarroController {
 	
 	@PostMapping("/numCeldas")
 	public boolean numCeldas() {
-		return vigilante.verificarDisponibilidad();
+		return vigilante.verificarDisponibilidad(CARRO);
 	}
 }

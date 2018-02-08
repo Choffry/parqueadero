@@ -1,30 +1,34 @@
 package com.parqueadero.services.impl;
 
-import com.parqueadero.models.CarroModel;
-import com.parqueadero.models.MotoModel;
+import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.services.VigilanteService;
 
 public class SacarVehiculoService implements VigilanteService{
 
 	@Override
-	public boolean verificarPlaca(CarroModel carroModel, int dia) {
+	public boolean verificarPlaca(VehiculoModel vehiculoModel, int dia) {
 		return false;
 	}
 
+
 	@Override
-	public boolean verificarDisponibilidad() {
+	public void addVehiculo(VehiculoModel vehiculoModel, String tipoVehiculo, int idParqueadero) {
+		
+	}
+
+
+	@Override
+	public boolean verificarDisponibilidad(String tipoVehiculo) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
+
 	@Override
-	public void addCarro(CarroModel carroModel) {
+	public void comenzarFactura(VehiculoModel vehiculoModel) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void addMoto(MotoModel motoModel) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

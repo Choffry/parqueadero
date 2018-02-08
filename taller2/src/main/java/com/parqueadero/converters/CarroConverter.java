@@ -3,22 +3,22 @@ package com.parqueadero.converters;
 import org.springframework.stereotype.Component;
 
 import com.parqueadero.entities.CarroEntity;
-import com.parqueadero.models.CarroModel;
+import com.parqueadero.models.VehiculoModel;
 
 @Component("carroConverter")
 public class CarroConverter {
 	
-	public CarroEntity model2entity(CarroModel carroModel) {
+	public CarroEntity model2entity(VehiculoModel vehiculoModel) {
 		CarroEntity carroEntity = new CarroEntity();
-		carroEntity.setIdCarro(carroModel.getIdCarro());
-		carroEntity.setPlaca(carroModel.getPlaca());
+		carroEntity.setIdCarro(vehiculoModel.getIdVehiculo());
+		carroEntity.setPlaca(vehiculoModel.getPlaca());
 		return carroEntity;
 	}
 	
-	public CarroModel entity2model(CarroEntity carroEntity) {
-		CarroModel carroModel = new CarroModel();
-		carroModel.setIdCarro(carroEntity.getIdCarro());
-		carroModel.setPlaca(carroEntity.getPlaca());
-		return carroModel;
+	public VehiculoModel entity2model(CarroEntity carroEntity) {
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setIdVehiculo(carroEntity.getIdCarro());
+		vehiculoModel.setPlaca(carroEntity.getPlaca());
+		return vehiculoModel;
 	}
 }

@@ -1,12 +1,11 @@
 package com.parqueadero.services;
 
-import com.parqueadero.models.CarroModel;
-import com.parqueadero.models.MotoModel;
+import com.parqueadero.models.VehiculoModel;
 
 public interface VigilanteService {
 	
-	public boolean verificarPlaca(CarroModel carroModel, int dia);
-	public boolean verificarDisponibilidad();
-	public void addCarro(CarroModel carroModel);
-	public void addMoto(MotoModel motoModel);
+	public boolean verificarPlaca(VehiculoModel VehiculoModel, int dia);
+	void addVehiculo(VehiculoModel vehiculoModel, String tipoVehiculo, int idParqueadero);
+	boolean verificarDisponibilidad(String tipoVehiculo);
+	void comenzarFactura(VehiculoModel vehiculoModel);
 }

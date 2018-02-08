@@ -9,29 +9,29 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.parqueadero.models.Calendario;
-import com.parqueadero.models.CarroModel;
+import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.services.impl.MeterVehiculoService;
 
 public class MeterVehiculoTest {
 	
 	MeterVehiculoService meterVehiculo;	
-	CarroModel carroModel;
+	VehiculoModel vehiculoModel;
 	
 	@Before
 	public void setUp() {
 		meterVehiculo = new MeterVehiculoService();
-		carroModel = new CarroModel(1, "ABC123");
+		vehiculoModel = new VehiculoModel(1, "ABC123", 300);
 	}
 	
 	@Test
 	public void testVerificarPlaca() {
 		Calendario calendario = Mockito.mock(Calendario.class);
 		Mockito.when(calendario.getActualDay()).thenReturn(Calendar.TUESDAY);
-		boolean respuesta = meterVehiculo.verificarPlaca(carroModel, calendario.getActualDay());
+		boolean respuesta = meterVehiculo.verificarPlaca(vehiculoModel, calendario.getActualDay());
 		assertEquals(false, respuesta);
 		
 		Mockito.when(calendario.getActualDay()).thenReturn(Calendar.MONDAY);
-		respuesta = meterVehiculo.verificarPlaca(carroModel, calendario.getActualDay());
+		respuesta = meterVehiculo.verificarPlaca(vehiculoModel, calendario.getActualDay());
 		assertEquals(true, respuesta);
 	}
 	

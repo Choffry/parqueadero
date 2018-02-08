@@ -10,8 +10,7 @@ import com.parqueadero.converters.CarroConverter;
 import com.parqueadero.converters.MotoConverter;
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
-import com.parqueadero.models.CarroModel;
-import com.parqueadero.models.MotoModel;
+import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.MotoRepository;
@@ -46,23 +45,21 @@ public class MeterVehiculoService implements VigilanteService{
 	private MotoConverter motoConverter;
 
 	@Override
-	public void addCarro(CarroModel carroModel) {
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
-		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
+	public void addVehiculo(VehiculoModel vehiculoModel, String tipoVehiculo, int idParqueadero) {
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
+		if("Carro".equals(tipoVehiculo)) {
+			parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
+		}else {
+			parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()-1);
+		}	
 		parqueaderoRepository.save(parqueadero);
-		comenzarFactura(carroModel);
-		carroRepository.save(carroConverter.model2entity(carroModel));
+		comenzarFactura(vehiculoModel);
+		carroRepository.save(carroConverter.model2entity(vehiculoModel));
 	}
 	
 	@Override
-	public void addMoto(MotoModel motoModel) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public boolean verificarPlaca(CarroModel carroModel, int dia){
-		String placa = carroModel.getPlaca();
+	public boolean verificarPlaca(VehiculoModel vehiculoModel, int dia){
+		String placa = vehiculoModel.getPlaca();
         char primeraLetra = placa.charAt(0);
         if (primeraLetra == 'A') { 
         	return (1 == dia) || (2 == dia);        	
@@ -71,20 +68,26 @@ public class MeterVehiculoService implements VigilanteService{
     }
 	
 	@Override
-	public boolean verificarDisponibilidad() {
-		return (celdasParqueadero(1)!=0);
+	public boolean verificarDisponibilidad(String tipoVehiculo) {
+		return (celdasParqueadero(1, tipoVehiculo)!=0);
 	}
 	
-	public int celdasParqueadero(int idParqueadero) {		
+	public int celdasParqueadero(int idParqueadero, String tipoVehiculo) {		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
-		return parqueadero.getNumCeldasCarro();
+		if("Carro".equals(tipoVehiculo)) {
+			return parqueadero.getNumCeldasCarro();
+		}else {
+			return parqueadero.getNumCeldasMoto();
+		}
+		
 	}
 	
-	public void comenzarFactura(CarroModel carroModel) {
+	@Override
+	public void comenzarFactura(VehiculoModel vehiculoModel) {
 		Date fechaInicio = new Date();
 		FacturaEntity factura = new FacturaEntity();
 		factura.setEstado(true);
-		factura.setPlaca(carroModel.getPlaca());
+		factura.setPlaca(vehiculoModel.getPlaca());
 		factura.setTipoVehiculo("Carro");
 		factura.setHoraIngreso(fechaInicio);
 		facturaReposiory.save(factura);
