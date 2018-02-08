@@ -49,12 +49,13 @@ public class MeterVehiculoService implements VigilanteService{
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		if("Carro".equals(tipoVehiculo)) {
 			parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
+			carroRepository.save(carroConverter.model2entity(vehiculoModel));
 		}else {
 			parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()-1);
+			motoRepository.save(motoConverter.model2entity(vehiculoModel));
 		}	
 		parqueaderoRepository.save(parqueadero);
-		comenzarFactura(vehiculoModel);
-		carroRepository.save(carroConverter.model2entity(vehiculoModel));
+		comenzarFactura(vehiculoModel, tipoVehiculo);
 	}
 	
 	@Override
@@ -83,12 +84,12 @@ public class MeterVehiculoService implements VigilanteService{
 	}
 	
 	@Override
-	public void comenzarFactura(VehiculoModel vehiculoModel) {
+	public void comenzarFactura(VehiculoModel vehiculoModel, String tipoVehiculo) {
 		Date fechaInicio = new Date();
 		FacturaEntity factura = new FacturaEntity();
 		factura.setEstado(true);
 		factura.setPlaca(vehiculoModel.getPlaca());
-		factura.setTipoVehiculo("Carro");
+		factura.setTipoVehiculo(tipoVehiculo);
 		factura.setHoraIngreso(fechaInicio);
 		facturaReposiory.save(factura);
 	}

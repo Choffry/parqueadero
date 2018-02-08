@@ -25,10 +25,8 @@ public class SacarVehiculoService implements VigilanteService{
 
 
 	@Override
-	public void comenzarFactura(VehiculoModel vehiculoModel) {
+	public void comenzarFactura(VehiculoModel vehiculoModel, String tipoVehiculo) {
 		// TODO Auto-generated method stub
 		
 	}
-
-
 }
