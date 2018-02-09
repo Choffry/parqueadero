@@ -9,5 +9,5 @@ import com.parqueadero.entities.FacturaEntity;
 
 @Repository("facturaReposiory")
 public interface FacturaReposiory extends JpaRepository<FacturaEntity, Serializable> {
-
+	public FacturaEntity findByPlacaAndEstado(String placa, boolean estado); 
 }

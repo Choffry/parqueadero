@@ -3,6 +3,7 @@ package com.parqueadero.converters;
 import org.springframework.stereotype.Component;
 
 import com.parqueadero.entities.MotoEntity;
+import com.parqueadero.models.MotoModel;
 import com.parqueadero.models.VehiculoModel;
 
 @Component("motoConverter")
@@ -16,10 +17,8 @@ public class MotoConverter {
 	}
 	
 	public VehiculoModel entity2model(MotoEntity motoEntity) {
-		VehiculoModel vehiculoModel = new VehiculoModel();
+		VehiculoModel vehiculoModel = new MotoModel(motoEntity.getPlaca(), motoEntity.getCilindraje());
 		vehiculoModel.setIdVehiculo(motoEntity.getIdMoto());
-		vehiculoModel.setPlaca(motoEntity.getPlaca());
-		vehiculoModel.setCilindraje(motoEntity.getCilindraje());
 		return vehiculoModel;
 	}
 }

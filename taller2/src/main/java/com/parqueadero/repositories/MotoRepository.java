@@ -9,5 +9,5 @@ import com.parqueadero.entities.MotoEntity;
 
 @Repository("motoRepository")
 public interface MotoRepository extends JpaRepository<MotoEntity, Serializable>{
-
+	public MotoEntity findByPlaca(String placa);
 }

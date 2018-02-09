@@ -1,20 +1,23 @@
 package com.parqueadero.models;
 
-public class VehiculoModel {
+import com.parqueadero.entities.ParqueaderoEntity;
+
+public abstract class VehiculoModel {
 	
 	private int idVehiculo;
 	private String placa;
-    private int cilindraje;
+    private boolean estado; 
     
-    public VehiculoModel() {
-	
+    public VehiculoModel(String placa) {
+		super();
+		this.placa = placa;
 	}
-    
-	public VehiculoModel(int idVehiculo, String placa, int cilindraje) {
+
+	public VehiculoModel(int idVehiculo, String placa, boolean estado) {
 		super();
 		this.idVehiculo = idVehiculo;
 		this.placa = placa;
-		this.cilindraje = cilindraje;
+		this.estado = estado;
 	}
 
 	public int getIdVehiculo() {
@@ -25,24 +28,25 @@ public class VehiculoModel {
 		this.idVehiculo = idVehiculo;
 	}
 
-	public String getPlaca() {
-		return placa;
-	}
-
 	public void setPlaca(String placa) {
 		this.placa = placa;
 	}
 
-	public int getCilindraje() {
-		return cilindraje;
+	public String getPlaca() {
+		return placa;
 	}
 
-	public void setCilindraje(int cilindraje) {
-		this.cilindraje = cilindraje;
+	public boolean isEstado() {
+		return estado;
 	}
 
-	@Override
-	public String toString() {
-		return "Moto [idVehiculo=" + idVehiculo + ", placa=" + placa + ", cilindraje=" + cilindraje + "]";
-	}	
+	public void setEstado(boolean estado) {
+		this.estado = estado;
+	}
+	
+	public abstract String getTipoVehiculo();
+	
+	public abstract int getCilindraje();
+	
+	public abstract void parquearVehiculo(ParqueaderoEntity parqueadero, VehiculoModel vehiculoModel);
 }
