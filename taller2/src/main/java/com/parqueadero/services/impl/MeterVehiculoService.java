@@ -28,6 +28,8 @@ public class MeterVehiculoService implements VigilanteService{
 	private static final String CARRO = "Carro";
 	private static final int MAX_CILINDRAJE = 500;
 	private static final int ADDICION_CILINDRAJE = 2000;
+	private static final int HORAS_DEL_DIA = 24;
+	private static final int HORAS_MAX = 9;
 	
 	@Autowired
 	@Qualifier("carroRepository")
@@ -77,6 +79,19 @@ public class MeterVehiculoService implements VigilanteService{
 	}
 	
 	@Override
+	public void sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
+		Date horaSalida = new Date();
+		
+		FacturaEntity factura = buscarfactura(vehiculoModel);
+		
+		int precio = precioTotal(factura.getHoraIngreso(), horaSalida, vehiculoModel, parqueadero);
+		
+		actualizarFactura(factura, horaSalida, precio);
+		
+	}
+	
+	@Override
 	public boolean verificarPlaca(VehiculoModel vehiculoModel, int dia){
 		String placa = vehiculoModel.getPlaca();
         char primeraLetra = placa.charAt(0);
@@ -114,17 +129,7 @@ public class MeterVehiculoService implements VigilanteService{
 	}
 
 	@Override
-	public int precioTotal(VehiculoModel vehiculoModel, ParqueaderoEntity parqueaderoEntity) {
-		int pagoTotal = 0;
-		FacturaEntity factura = buscarfactura(vehiculoModel);
-		Date fechaEntrada = factura.getHoraIngreso();
-		Date fechaSalida = new Date();
-
-		pagoTotal = generarCobro(fechaEntrada, fechaSalida, vehiculoModel, parqueaderoEntity);
-		return pagoTotal;
-	}
-	
-	public int generarCobro(Date fechaEntrada, Date fechaSalida, 
+	public int precioTotal(Date fechaEntrada, Date fechaSalida, 
 			VehiculoModel vehiculoModel, ParqueaderoEntity parqueaderoEntity) {
 		int pagoTotal = 0;
 		int timepoEstadia =  horasDeEstadia(fechaEntrada, fechaSalida);
@@ -144,17 +149,17 @@ public class MeterVehiculoService implements VigilanteService{
 	
 	public int numeroDiasQueEstuvo(int horas){
         int aux = 0;
-        if (horas%24 > 9){
+        if (horas%HORAS_DEL_DIA >= HORAS_MAX){
             aux = 1;
         }
-        LOG.info("METHOD: numero de dias que estuvo: " + (horas/24) + aux);
-        return (horas/24) + aux;
+        LOG.info("METHOD: numero de dias que estuvo: " + (horas/HORAS_DEL_DIA) + "-" + aux);
+        return (horas/HORAS_DEL_DIA) + aux;
 	}
 
 	public int numeroHorasExtra(int horas){
-        if (horas%24 < 9){
-        	LOG.info("METHOD: numero de horas por fuera de dias: " + horas %24	);
-            return horas %24;
+        if (horas%HORAS_DEL_DIA < HORAS_MAX){
+        	LOG.info("METHOD: numero de horas por fuera de dias: " + horas %HORAS_DEL_DIA	);
+            return horas %HORAS_DEL_DIA;
         }else{
             return 0;
         }
@@ -163,6 +168,13 @@ public class MeterVehiculoService implements VigilanteService{
 	public FacturaEntity buscarfactura(VehiculoModel vehiculoModel) {
 		String placa = vehiculoModel.getPlaca();
 		return facturaReposiory.findByPlacaAndEstado(placa, true);
+	}
+	
+	public void actualizarFactura(FacturaEntity facturaEntity, Date horaSalida, int pagoTotal) {
+		facturaEntity.setEstado(false);
+		facturaEntity.setHoraSalida(horaSalida);
+		facturaEntity.setPagoTotal(pagoTotal);
+		facturaReposiory.save(facturaEntity);
 	}
 	
 	public int horasDeEstadia(Date fechaEntrada, Date fechaSalida) {

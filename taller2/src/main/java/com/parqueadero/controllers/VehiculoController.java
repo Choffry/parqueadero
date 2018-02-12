@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.models.Calendario;
+import com.parqueadero.models.CarroModel;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.services.VigilanteService;
 
@@ -30,19 +31,20 @@ public class VehiculoController {
 	@Qualifier("meterVehiculoService")
 	private VigilanteService vigilanteEntrada;
 	
-	@Autowired
-	@Qualifier("sacarVehiculoService")
-	private VigilanteService vigilanteSalida;
-	
 	@PostMapping("/addVehiculo")
-	public void addVehiculo(@RequestBody VehiculoModel vehiculoModel) {
-		LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
+	public void addVehiculo(@RequestBody String placa, int cc) {
+		
+		VehiculoModel vehiculoModel = new CarroModel(placa);
+		
+		vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
+		
+		/*LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
 		if(vigilanteEntrada.verificarPlaca(vehiculoModel, dia) && vigilanteEntrada.verificarDisponibilidad(CARRO)) {		
 			vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
-			LOG.info("Carro ingresado");
+			//LOG.info("Carro ingresado");
 		}else {
-			LOG.info("Acceso denegado");
-		}
+			//LOG.info("Acceso denegado");
+		}*/
 	}
 	
 	@PostMapping("/outVehiculo")

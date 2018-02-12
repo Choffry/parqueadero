@@ -228,9 +228,79 @@ public class MeterVehiculoTest {
 		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 500);
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.generarCobro(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(3000, resultado);
+	}
+	
+	@Test
+	public void testCostoParaMotoConUnDiaExactoYCilindrajeMenorA500() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
+		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 200);
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		
+		assertEquals(4000, resultado);
+	}
+	
+	@Test
+	public void testCostoParaMotoConUnDiaExactoYCilindrajeMayorA500() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
+		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 600);
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		
+		assertEquals(6000, resultado);
+	}
+	
+	@Test
+	public void testCostoParaCarroConUnDiaExacto() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
+		VehiculoModel vehiculoModel = new CarroModel("WSW04D");
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		
+		assertEquals(8000, resultado);
+	}
+	
+	@Test
+	public void testCostoParaMotoConNueveHoras() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 6, 12, 0);
+		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 200);
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		
+		assertEquals(4000, resultado);
+	}
+	
+	@Test
+	public void testCostoParaCarro() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 2, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
+		VehiculoModel vehiculoModel = new CarroModel("WSW04D");
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		
+		assertEquals(2000, resultado);
 	}
 	
 //ParqueaderoEntity parqueaderoEntity = new ParqueaderoEntity(1, 20, 10, 8000, 4000, 1000, 500);
