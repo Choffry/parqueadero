@@ -1,6 +1,8 @@
 package com.parqueadero.services.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +15,7 @@ import com.parqueadero.converters.MotoConverter;
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.VehiculoModel;
+import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.MotoRepository;
@@ -30,6 +33,7 @@ public class MeterVehiculoService implements VigilanteService{
 	private static final int ADDICION_CILINDRAJE = 2000;
 	private static final int HORAS_DEL_DIA = 24;
 	private static final int HORAS_MAX = 9;
+	private static final int MILISEGUNDOS_EN_HORA = 3600000;
 	
 	@Autowired
 	@Qualifier("carroRepository")
@@ -67,6 +71,8 @@ public class MeterVehiculoService implements VigilanteService{
 			motoRepository.save(motoConverter.model2entity(vehiculoModel));
 		}
 		
+		//vehiculoModel.parquearVehiculo(parqueadero, vehiculoModel);
+		
 		parqueaderoRepository.save(parqueadero);
 		comenzarFactura(vehiculoModel);
 		
@@ -89,6 +95,18 @@ public class MeterVehiculoService implements VigilanteService{
 		
 		actualizarFactura(factura, horaSalida, precio);
 		
+	}
+	
+	@Override
+	public List<VehiculosAdentro> listAllVehiculos(){
+		List<FacturaEntity> facturas = facturaReposiory.findByEstado(true);
+		List<VehiculosAdentro> vehiculosAdentro = new ArrayList<VehiculosAdentro>();
+		for(FacturaEntity factura : facturas) {
+			VehiculosAdentro vehiculo = new VehiculosAdentro
+					(factura.getPlaca(), factura.getTipoVehiculo(), factura.getHoraIngreso());
+			vehiculosAdentro.add(vehiculo);
+		}
+		return vehiculosAdentro;
 	}
 	
 	@Override
@@ -189,10 +207,10 @@ public class MeterVehiculoService implements VigilanteService{
 		LOG.info("METHOD: date2hours() inicia");
 		Long fechaEnHoras;
 		Long fechaEnMilisegundos = fecha.getTime();
-		if(fechaEnMilisegundos%3600000 == 0){
-			fechaEnHoras = fechaEnMilisegundos/3600000;
+		if(fechaEnMilisegundos%MILISEGUNDOS_EN_HORA == 0){
+			fechaEnHoras = fechaEnMilisegundos/MILISEGUNDOS_EN_HORA;
 		}else {
-			fechaEnHoras = (fechaEnMilisegundos/3600000) + 1;
+			fechaEnHoras = (fechaEnMilisegundos/MILISEGUNDOS_EN_HORA) + 1;
 		}
 		LOG.info("METHOD: date2hours() -- PARAMS: fecha en milisegundos:" + fechaEnMilisegundos);
 		LOG.info("METHOD: date2hours() -- PARAMS: fecha en horas:" + fechaEnHoras);

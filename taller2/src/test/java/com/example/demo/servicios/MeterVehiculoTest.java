@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,10 +23,12 @@ import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.CarroModel;
 import com.parqueadero.models.MotoModel;
 import com.parqueadero.models.VehiculoModel;
+import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.MotoRepository;
 import com.parqueadero.repositories.ParqueaderoRepository;
+import com.parqueadero.services.VigilanteService;
 import com.parqueadero.services.impl.MeterVehiculoService;
 
 
@@ -301,6 +305,61 @@ public class MeterVehiculoTest {
 		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(2000, resultado);
+	}
+	
+	@Test
+	public void testActualizarfactura() {
+		@SuppressWarnings("deprecation")
+		Date fechaEntrada = new Date(2018, 9, 6, 2, 0);
+		@SuppressWarnings("deprecation")
+		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
+		FacturaEntity factura =  new FacturaEntity();
+		factura.setEstado(true);
+		factura.setHoraIngreso(fechaEntrada);
+		
+		meterVehiculo.actualizarFactura(factura, fechaSalida, 5000);
+		
+		boolean resultado = factura.isEstado();
+		
+		assertFalse(resultado);
+		
+		facturaReposiory.delete(factura);
+	}
+	
+	@Test
+	public void testListAllVehiculos() {
+		
+		VehiculoModel carroModel1 = new CarroModel("IAP588");
+		VehiculoModel carroModel2 = new CarroModel("IAP587");
+		VehiculoModel carroModel3 = new CarroModel("IAP586");
+		meterVehiculo.addVehiculo(carroModel1, 1);
+		meterVehiculo.addVehiculo(carroModel2, 1);
+		meterVehiculo.addVehiculo(carroModel3, 1);
+		
+		List<VehiculosAdentro> vehiculos = meterVehiculo.listAllVehiculos();
+		int resultado =  vehiculos.size();
+		
+		assertEquals(3, resultado);
+		
+		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
+		CarroEntity carro = carroRepository.findByPlaca("IAP588");
+		FacturaEntity factura2 = facturaReposiory.findByPlacaAndEstado("IAP587", true);
+		CarroEntity carro2 = carroRepository.findByPlaca("IAP587");
+		FacturaEntity factura3 = facturaReposiory.findByPlacaAndEstado("IAP586", true);
+		CarroEntity carro3 = carroRepository.findByPlaca("IAP586");
+		
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		
+		carroRepository.delete(carro);
+		carroRepository.delete(carro2);
+		carroRepository.delete(carro3);
+		facturaReposiory.delete(factura);
+		facturaReposiory.delete(factura2);
+		facturaReposiory.delete(factura3);
+		
+		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+3);
+		
+		parqueaderoRepository.save(parqueadero);
 	}
 	
 //ParqueaderoEntity parqueaderoEntity = new ParqueaderoEntity(1, 20, 10, 8000, 4000, 1000, 500);

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.parqueadero.converters.CarroConverter;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.repositories.CarroRepository;
+import com.parqueadero.repositories.ParqueaderoRepository;
 
 public class CarroModel extends VehiculoModel{
 
@@ -18,6 +19,10 @@ public class CarroModel extends VehiculoModel{
 	@Autowired
 	@Qualifier("carroConverter")
 	CarroConverter carroConverter;
+	
+	@Autowired
+	@Qualifier("parqueaderoRepository")
+	ParqueaderoRepository parqueaderoRepository;
 
 	private static final String CARRO = "Carro";
 	private static final Log LOG = LogFactory.getLog(CarroModel.class);
@@ -41,8 +46,10 @@ public class CarroModel extends VehiculoModel{
 		LOG.info("METHOD: parquearVehiculo() inicia");
 		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
 		LOG.info("METHOD: Se baja el numero de celdas en el parqueadero");
-		carroRepository.save(carroConverter.model2entity(vehiculoModel));
+		CarroModel carroModel = (CarroModel) vehiculoModel;
+		carroRepository.save(carroConverter.model2entity(carroModel));
 		LOG.info("METHOD: Se guarda el carro");
+		parqueaderoRepository.save(parqueadero);
 	}
 
 	@Override

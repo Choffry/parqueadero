@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.parqueadero.converters.MotoConverter;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.repositories.MotoRepository;
+import com.parqueadero.repositories.ParqueaderoRepository;
 
 public class MotoModel extends VehiculoModel{
 	
@@ -13,6 +14,9 @@ public class MotoModel extends VehiculoModel{
 	
 	@Autowired
 	MotoConverter motoConverter;
+	
+	@Autowired
+	ParqueaderoRepository parqueaderoRepository;
 
 	private static final String MOTO = "Moto";
 	private int cilindraje;
@@ -46,5 +50,7 @@ public class MotoModel extends VehiculoModel{
 		
 		parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()-1);
 		motoRepository.save(motoConverter.model2entity(vehiculoModel));
+		parqueaderoRepository.save(parqueadero);
+		
 	}
 }

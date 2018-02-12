@@ -1,18 +1,16 @@
 package com.parqueadero.controllers;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.models.Calendario;
-import com.parqueadero.models.CarroModel;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.services.VigilanteService;
 
@@ -22,7 +20,6 @@ public class VehiculoController {
 	
 	Calendario calendario = new Calendario();
 	int dia = calendario.getActualDay();
-	private static final String CARRO = "Carro";
 	private static final int PARQUEADERO = 1;
 	
 	private static final Log LOG = LogFactory.getLog(VehiculoController.class);
@@ -32,9 +29,7 @@ public class VehiculoController {
 	private VigilanteService vigilanteEntrada;
 	
 	@PostMapping("/addVehiculo")
-	public void addVehiculo(@RequestBody String placa, int cc) {
-		
-		VehiculoModel vehiculoModel = new CarroModel(placa);
+	public void addVehiculo(@RequestBody VehiculoModel vehiculoModel) {
 		
 		vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
 		
@@ -48,17 +43,15 @@ public class VehiculoController {
 	}
 	
 	@PostMapping("/outVehiculo")
-	public int outVehiculo(@RequestBody VehiculoModel vehiculoModel) {
+	public void outVehiculo(@RequestBody VehiculoModel vehiculoModel) {
 		LOG.info("METHOD: outVehiculo() inicializado");
 		//return vigilanteSalida.precioTotal(vehiculoModel);
-		return 0;
 	}
 	
-	@PostMapping("/numCeldas")
-	public boolean numCeldas() {
-		@SuppressWarnings("deprecation")
-		Date fecha = new Date(2018, 9, 6, 3, 5);
-		LOG.info("Fecha en milisegundos: " + fecha.getTime());
-		return vigilanteEntrada.verificarDisponibilidad(CARRO);
+	@GetMapping("/listVehiculo")
+	public String listVehiculo() {
+		LOG.info("METHOD: listVehiculo() inicializado");
+		
+		return null;
 	}
 }
