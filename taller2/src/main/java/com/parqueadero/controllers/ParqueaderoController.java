@@ -1,5 +1,7 @@
 package com.parqueadero.controllers;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,46 +14,50 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.models.Calendario;
 import com.parqueadero.models.VehiculoModel;
+import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.services.VigilanteService;
 
 @RestController
-@RequestMapping("/carro")
-public class VehiculoController {
+@RequestMapping("/parqueadero")
+public class ParqueaderoController {
 	
 	Calendario calendario = new Calendario();
 	int dia = calendario.getActualDay();
 	private static final int PARQUEADERO = 1;
+	private static final String CARRO = "Carro";
+	private static final String MOTO = "Moto";
 	
-	private static final Log LOG = LogFactory.getLog(VehiculoController.class);
+	private static final Log LOG = LogFactory.getLog(ParqueaderoController.class);
 	
 	@Autowired
 	@Qualifier("vigilanteService")
 	private VigilanteService vigilante;
 	
-	@PostMapping("/addVehiculo")
-	public void addVehiculo(@RequestBody VehiculoModel vehiculoModel) {
+	@PostMapping("/addCarro")
+	public void addCarro(@RequestBody VehiculoModel vehiculoModel) {
 		
+		vehiculoModel.setTipoVehiculo(CARRO);
 		vigilante.agregarVehiculo(vehiculoModel, PARQUEADERO);
+	
+	}
+	
+	@PostMapping("/addMoto")
+	public void addMoto(@RequestBody VehiculoModel vehiculoModel) {
 		
-		/*LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
-		if(vigilanteEntrada.verificarPlaca(vehiculoModel, dia) && vigilanteEntrada.verificarDisponibilidad(CARRO)) {		
-			vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
-			//LOG.info("Carro ingresado");
-		}else {
-			//LOG.info("Acceso denegado");
-		}*/
+		vehiculoModel.setTipoVehiculo(MOTO);
+		vigilante.agregarVehiculo(vehiculoModel, PARQUEADERO);
+	
 	}
 	
 	@PostMapping("/outVehiculo")
 	public void outVehiculo(@RequestBody VehiculoModel vehiculoModel) {
 		LOG.info("METHOD: outVehiculo() inicializado");
-		//return vigilanteSalida.precioTotal(vehiculoModel);
+		vigilante.sacarVehiculo(vehiculoModel, PARQUEADERO);
 	}
 	
 	@GetMapping("/listVehiculo")
-	public String listVehiculo() {
-		LOG.info("METHOD: listVehiculo() inicializado");
-		
-		return null;
+	public List<VehiculosAdentro> listVehiculo() {
+		LOG.info("METHOD: listVehiculo() inicializado");		
+		return vigilante.listarTodosLosVehiculos();
 	}
 }

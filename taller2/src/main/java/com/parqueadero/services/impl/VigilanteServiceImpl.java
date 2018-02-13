@@ -53,6 +53,14 @@ public class VigilanteServiceImpl implements VigilanteService{
 		parqueaderoRepository.save(parqueadero);
 		comenzarFactura(vehiculoModel);
 		
+		/*LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
+		if(vigilanteEntrada.verificarPlaca(vehiculoModel, dia) && vigilanteEntrada.verificarDisponibilidad(CARRO)) {		
+			vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
+			//LOG.info("Carro ingresado");
+		}else {
+			//LOG.info("Acceso denegado");
+		}*/
+		
 		/*LOG.info("METHOD: addVehiculo() inicia");
 		
 		vehiculoModel.parquearVehiculo(parqueadero, vehiculoModel);
@@ -67,11 +75,19 @@ public class VigilanteServiceImpl implements VigilanteService{
 		Date horaSalida = new Date();
 		
 		FacturaEntity factura = buscarfactura(vehiculoModel);
+		factura.setHoraSalida(horaSalida);
 		
-		int precio = precioTotal(factura.getHoraIngreso(), horaSalida, vehiculoModel, parqueadero);
+		int precio = precioTotal(factura, parqueadero);
 		
 		actualizarFactura(factura, horaSalida, precio);
 		
+		if(factura.getTipoVehiculo().equals(CARRO)) {
+			parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+1);
+		}else {
+			parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()+1);
+		}
+		
+		parqueaderoRepository.save(parqueadero);
 	}
 	
 	@Override
@@ -119,21 +135,23 @@ public class VigilanteServiceImpl implements VigilanteService{
 		factura.setEstado(true);
 		factura.setPlaca(vehiculoModel.getPlaca());
 		factura.setTipoVehiculo(tipoVehiculo);
+		factura.setCilindraje(vehiculoModel.getCilindraje());
 		factura.setHoraIngreso(fechaEntrada);
 		facturaReposiory.save(factura);
 	}
 
 	@Override
-	public int precioTotal(Date fechaEntrada, Date fechaSalida, 
-			VehiculoModel vehiculoModel, ParqueaderoEntity parqueaderoEntity) {
+	public int precioTotal(FacturaEntity factura, ParqueaderoEntity parqueaderoEntity) {
 		int pagoTotal = 0;
+		Date fechaEntrada = factura.getHoraIngreso();
+		Date fechaSalida = factura.getHoraSalida();
 		int timepoEstadia =  horasDeEstadia(fechaEntrada, fechaSalida);
 		LOG.info("METHOD: horas que se introducen al metodo " + timepoEstadia);
-		if(vehiculoModel.getTipoVehiculo().equals(CARRO)) {
+		if(factura.getTipoVehiculo().equals(CARRO)) {
 			pagoTotal += parqueaderoEntity.getPrecioDiaCarro()*numeroDiasQueEstuvo(timepoEstadia);
 			pagoTotal += parqueaderoEntity.getPrecioHoraCarro()*numeroHorasExtra(timepoEstadia);
 		}else {
-			if(vehiculoModel.getCilindraje() >= MAX_CILINDRAJE) {
+			if(factura.getCilindraje() >= MAX_CILINDRAJE) {
 				pagoTotal += ADDICION_CILINDRAJE;
 			}
 			pagoTotal += parqueaderoEntity.getPrecioDiaMoto()*numeroDiasQueEstuvo(timepoEstadia);
