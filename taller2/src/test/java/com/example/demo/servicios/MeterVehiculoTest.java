@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -16,20 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.parqueadero.Taller2Application;
-import com.parqueadero.entities.CarroEntity;
 import com.parqueadero.entities.FacturaEntity;
-import com.parqueadero.entities.MotoEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
-import com.parqueadero.models.CarroModel;
-import com.parqueadero.models.MotoModel;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
-import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
-import com.parqueadero.repositories.MotoRepository;
 import com.parqueadero.repositories.ParqueaderoRepository;
 import com.parqueadero.services.VigilanteService;
-import com.parqueadero.services.impl.MeterVehiculoService;
+import com.parqueadero.services.impl.VigilanteServiceImpl;
 
 
 @RunWith(SpringRunner.class)
@@ -37,26 +33,26 @@ import com.parqueadero.services.impl.MeterVehiculoService;
 public class MeterVehiculoTest {
 	
 	@Autowired
-	MeterVehiculoService meterVehiculo;
+	VigilanteServiceImpl vigilante;
 	
 	@Autowired
 	FacturaReposiory facturaReposiory;
 	
 	@Autowired
-	CarroRepository carroRepository;
-	
-	@Autowired
-	MotoRepository motoRepository;
-	
-	@Autowired
 	ParqueaderoRepository parqueaderoRepository;
+	
+	private static final Log LOG = LogFactory.getLog(VigilanteServiceImpl.class);
+	private static final String CARRO = "Carro";
+	private static final String MOTO = "Moto";
+	private static final int ID_PARQUEADERO = 1;
 
 	@Test
 	public void testVerificarPlacaQueEmpiezaPorAyEsunDiaHabil() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("AAA111");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("AAA111");
 		
-		boolean placaIniciaPorA = meterVehiculo.verificarPlaca(vehiculoModel, Calendar.MONDAY);
+		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.MONDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
@@ -64,9 +60,10 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueEmpiezaPorAyNoEsunDiaHabil() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("AAA111");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("AAA111");
 		
-		boolean placaIniciaPorA = meterVehiculo.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
+		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
 		
 		assertFalse(placaIniciaPorA);
 	}
@@ -74,9 +71,10 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueNoEmpiezaPorAYEsunDiaHabil() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("BAA111");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("BAA111");
 		
-		boolean placaIniciaPorA = meterVehiculo.verificarPlaca(vehiculoModel, Calendar.MONDAY);
+		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.MONDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
@@ -84,9 +82,10 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueNoEmpiezaPorAYNoEsunDiaHabil() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("BAA111");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("BAA111");
 		
-		boolean placaIniciaPorA = meterVehiculo.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
+		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
@@ -94,9 +93,11 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarCeldasDisponiblesParaEnCarro() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("PPP456");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("PPP456");
+		vehiculoModel.setTipoVehiculo(CARRO);
 		
-		int respuesta = meterVehiculo.celdasParqueadero(1, vehiculoModel.getTipoVehiculo());
+		int respuesta = vigilante.numCeldasParqueadero(ID_PARQUEADERO, vehiculoModel.getTipoVehiculo());
 		
 		assertEquals(20,  respuesta);
 	}
@@ -104,9 +105,12 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarCeldasDisponiblesEnMoto() {
 		
-		VehiculoModel vehiculoModel = new MotoModel("PPP456", 300);
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("PPP456");
+		vehiculoModel.setCilindraje(300);
+		vehiculoModel.setTipoVehiculo(MOTO);
 		
-		int respuesta =  meterVehiculo.celdasParqueadero(1, vehiculoModel.getTipoVehiculo());
+		int respuesta =  vigilante.numCeldasParqueadero(ID_PARQUEADERO, vehiculoModel.getTipoVehiculo());
 		
 		assertEquals(10, respuesta);
 	}
@@ -114,9 +118,11 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarIngresoDeFacturaABaseDeDatos() {
 		
-		VehiculoModel vehiculoModel = new CarroModel("IAP588");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("IAP588");
+		vehiculoModel.setTipoVehiculo(CARRO);
 		
-		meterVehiculo.comenzarFactura(vehiculoModel);
+		vigilante.comenzarFactura(vehiculoModel);
 		
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);	
 		assertTrue(null != factura);
@@ -127,37 +133,38 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarIngresoDeCarroAlParqueadero() {
 		
-		VehiculoModel carroModel = new CarroModel("IAP588");
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("IAP588");
+		vehiculoModel.setTipoVehiculo(CARRO);
 		
-		meterVehiculo.addVehiculo(carroModel, 1);
-		
-		CarroEntity carro = carroRepository.findByPlaca("IAP588");
-		assertTrue(null != carro);
+		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
 		
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		assertEquals(CARRO, factura.getTipoVehiculo());
+		
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
 		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+1);
-		carroRepository.delete(carro);
-		facturaReposiory.delete(factura);
 		parqueaderoRepository.save(parqueadero);
+		facturaReposiory.delete(factura);
 	}
 	
 	@Test
 	public void testVerificarIngresoDeMotoAlParqueadero() {
 		
-		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 300);
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("PPP456");
+		vehiculoModel.setCilindraje(300);
+		vehiculoModel.setTipoVehiculo(MOTO);
 		
-		meterVehiculo.addVehiculo(vehiculoModel, 1);
+		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
 		
-		MotoEntity moto = motoRepository.findByPlaca("WSW04D");
-		assertTrue(null != moto);
+		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("PPP456", true);
+		assertEquals(MOTO, factura.getTipoVehiculo());
 		
-		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("WSW04D", true);
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
 		parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()+1);
-		motoRepository.delete(moto);
-		facturaReposiory.delete(factura);
 		parqueaderoRepository.save(parqueadero);
+		facturaReposiory.delete(factura);
 	}
 	
 	@Test
@@ -167,7 +174,7 @@ public class MeterVehiculoTest {
 		Date fecha = new Date(2018, 9, 6, 3, 5);
 		Long answer = (long) 17082489;
 		
-		Long resultado = meterVehiculo.date2hours(fecha);
+		Long resultado = vigilante.date2hours(fecha);
 		
 		assertEquals(answer, resultado);
 	}
@@ -179,7 +186,7 @@ public class MeterVehiculoTest {
 		Date fecha = new Date(2018, 9, 6, 3, 0);
 		Long answer = (long) 17082488;
 		
-		Long resultado = meterVehiculo.date2hours(fecha);
+		Long resultado = vigilante.date2hours(fecha);
 		
 		assertEquals(answer, resultado);
 	}
@@ -192,7 +199,7 @@ public class MeterVehiculoTest {
 		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
 		
-		int resultado = meterVehiculo.horasDeEstadia(fechaEntrada, fechaSalida);
+		int resultado = vigilante.horasDeEstadia(fechaEntrada, fechaSalida);
 		
 		assertEquals(1, resultado);
 	}
@@ -205,7 +212,7 @@ public class MeterVehiculoTest {
 		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 7, 3, 5);
 		
-		int resultado = meterVehiculo.horasDeEstadia(fechaEntrada, fechaSalida);
+		int resultado = vigilante.horasDeEstadia(fechaEntrada, fechaSalida);
 		
 		assertEquals(25, resultado);
 	}
@@ -218,106 +225,128 @@ public class MeterVehiculoTest {
 		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 10, 7, 3, 0);
 		
-		int resultado = meterVehiculo.horasDeEstadia(fechaEntrada, fechaSalida);
+		int resultado = vigilante.horasDeEstadia(fechaEntrada, fechaSalida);
 		
 		assertEquals((32*24), resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaMotoConCilindrajeMayorA500() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 2, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
-		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 500);
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setCilindraje(500);
+		vehiculoModel.setTipoVehiculo(MOTO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(3000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaMotoConUnDiaExactoYCilindrajeMenorA500() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
-		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 200);
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setCilindraje(200);
+		vehiculoModel.setTipoVehiculo(MOTO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(4000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaMotoConUnDiaExactoYCilindrajeMayorA500() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
-		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 600);
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setCilindraje(600);
+		vehiculoModel.setTipoVehiculo(MOTO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(6000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaCarroConUnDiaExacto() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 7, 3, 0);
-		VehiculoModel vehiculoModel = new CarroModel("WSW04D");
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setTipoVehiculo(CARRO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(8000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaMotoConNueveHoras() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 3, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 6, 12, 0);
-		VehiculoModel vehiculoModel = new MotoModel("WSW04D", 200);
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setCilindraje(200);
+		vehiculoModel.setTipoVehiculo(MOTO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(4000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCostoParaCarro() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 2, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
-		VehiculoModel vehiculoModel = new CarroModel("WSW04D");
+		
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("WSW04D");
+		vehiculoModel.setTipoVehiculo(CARRO);
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 		
-		int resultado = meterVehiculo.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
+		int resultado = vigilante.precioTotal(fechaEntrada, fechaSalida, vehiculoModel, parqueadero);
 		
 		assertEquals(2000, resultado);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testActualizarfactura() {
-		@SuppressWarnings("deprecation")
 		Date fechaEntrada = new Date(2018, 9, 6, 2, 0);
-		@SuppressWarnings("deprecation")
 		Date fechaSalida = new Date(2018, 9, 6, 3, 5);
+		
 		FacturaEntity factura =  new FacturaEntity();
 		factura.setEstado(true);
 		factura.setHoraIngreso(fechaEntrada);
 		
-		meterVehiculo.actualizarFactura(factura, fechaSalida, 5000);
+		vigilante.actualizarFactura(factura, fechaSalida, 5000);
 		
 		boolean resultado = factura.isEstado();
 		
@@ -329,35 +358,31 @@ public class MeterVehiculoTest {
 	@Test
 	public void testListAllVehiculos() {
 		
-		VehiculoModel carroModel1 = new CarroModel("IAP588");
-		VehiculoModel carroModel2 = new CarroModel("IAP587");
-		VehiculoModel carroModel3 = new CarroModel("IAP586");
-		meterVehiculo.addVehiculo(carroModel1, 1);
-		meterVehiculo.addVehiculo(carroModel2, 1);
-		meterVehiculo.addVehiculo(carroModel3, 1);
+		VehiculoModel vehiculoModel = new VehiculoModel();
+		vehiculoModel.setPlaca("IAP588");
+		vehiculoModel.setTipoVehiculo(CARRO);
 		
-		List<VehiculosAdentro> vehiculos = meterVehiculo.listAllVehiculos();
+		VehiculoModel vehiculoModel2 = new VehiculoModel();
+		vehiculoModel2.setPlaca("IAP587");
+		vehiculoModel2.setTipoVehiculo(CARRO);
+		
+		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
+		vigilante.agregarVehiculo(vehiculoModel2, ID_PARQUEADERO);
+		
+		List<VehiculosAdentro> vehiculos = vigilante.listarTodosLosVehiculos();
 		int resultado =  vehiculos.size();
 		
-		assertEquals(3, resultado);
+		assertEquals(2, resultado);
 		
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
-		CarroEntity carro = carroRepository.findByPlaca("IAP588");
-		FacturaEntity factura2 = facturaReposiory.findByPlacaAndEstado("IAP587", true);
-		CarroEntity carro2 = carroRepository.findByPlaca("IAP587");
-		FacturaEntity factura3 = facturaReposiory.findByPlacaAndEstado("IAP586", true);
-		CarroEntity carro3 = carroRepository.findByPlaca("IAP586");
-		
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
-		
-		carroRepository.delete(carro);
-		carroRepository.delete(carro2);
-		carroRepository.delete(carro3);
 		facturaReposiory.delete(factura);
-		facturaReposiory.delete(factura2);
-		facturaReposiory.delete(factura3);
 		
-		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+3);
+		factura = facturaReposiory.findByPlacaAndEstado("IAP587", true);
+		facturaReposiory.delete(factura);
+		
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
+		
+		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+2);
 		
 		parqueaderoRepository.save(parqueadero);
 	}

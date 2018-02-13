@@ -10,22 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.parqueadero.converters.CarroConverter;
-import com.parqueadero.converters.MotoConverter;
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
-import com.parqueadero.repositories.CarroRepository;
 import com.parqueadero.repositories.FacturaReposiory;
-import com.parqueadero.repositories.MotoRepository;
 import com.parqueadero.repositories.ParqueaderoRepository;
 import com.parqueadero.services.VigilanteService;
 
-@Service("meterVehiculoService")
-public class MeterVehiculoService implements VigilanteService{
+@Service("vigilanteService")
+public class VigilanteServiceImpl implements VigilanteService{
 	
-	private static final Log LOG = LogFactory.getLog(MeterVehiculoService.class);
+	private static final Log LOG = LogFactory.getLog(VigilanteServiceImpl.class);
 	private static final int DOMINGO = 1;
 	private static final int LUNES = 2;
 	private static final String CARRO = "Carro";
@@ -36,42 +32,23 @@ public class MeterVehiculoService implements VigilanteService{
 	private static final int MILISEGUNDOS_EN_HORA = 3600000;
 	
 	@Autowired
-	@Qualifier("carroRepository")
-	private CarroRepository carroRepository;
-	
-	@Autowired
-	@Qualifier("motoRepository")
-	private MotoRepository motoRepository;
-	
-	@Autowired
 	@Qualifier("facturaReposiory")
 	private FacturaReposiory facturaReposiory;
 	
 	@Autowired
 	@Qualifier("parqueaderoRepository")
 	private ParqueaderoRepository parqueaderoRepository;
-	
-	@Autowired
-	@Qualifier("carroConverter")
-	private CarroConverter carroConverter;
-	
-	@Autowired
-	@Qualifier("motoConverter")
-	private MotoConverter motoConverter;
 
 	@Override
-	public void addVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+	public void agregarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		
 		if(vehiculoModel.getTipoVehiculo().equals(CARRO)) {
 			parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()-1);
-			carroRepository.save(carroConverter.model2entity(vehiculoModel));
 		}else {
 			parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()-1);
-			motoRepository.save(motoConverter.model2entity(vehiculoModel));
 		}
-		
-		//vehiculoModel.parquearVehiculo(parqueadero, vehiculoModel);
 		
 		parqueaderoRepository.save(parqueadero);
 		comenzarFactura(vehiculoModel);
@@ -98,9 +75,9 @@ public class MeterVehiculoService implements VigilanteService{
 	}
 	
 	@Override
-	public List<VehiculosAdentro> listAllVehiculos(){
+	public List<VehiculosAdentro> listarTodosLosVehiculos(){
 		List<FacturaEntity> facturas = facturaReposiory.findByEstado(true);
-		List<VehiculosAdentro> vehiculosAdentro = new ArrayList<VehiculosAdentro>();
+		List<VehiculosAdentro> vehiculosAdentro = new ArrayList<>();
 		for(FacturaEntity factura : facturas) {
 			VehiculosAdentro vehiculo = new VehiculosAdentro
 					(factura.getPlaca(), factura.getTipoVehiculo(), factura.getHoraIngreso());
@@ -121,10 +98,10 @@ public class MeterVehiculoService implements VigilanteService{
 	
 	@Override
 	public boolean verificarDisponibilidad(String tipoVehiculo) {
-		return (celdasParqueadero(1, tipoVehiculo)!=0);
+		return (numCeldasParqueadero(1, tipoVehiculo)!=0);
 	}
 	
-	public int celdasParqueadero(int idParqueadero, String tipoVehiculo) {		
+	public int numCeldasParqueadero(int idParqueadero, String tipoVehiculo) {		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		if(CARRO.equals(tipoVehiculo)) {
 			return parqueadero.getNumCeldasCarro();

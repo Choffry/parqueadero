@@ -25,13 +25,13 @@ public class VehiculoController {
 	private static final Log LOG = LogFactory.getLog(VehiculoController.class);
 	
 	@Autowired
-	@Qualifier("meterVehiculoService")
-	private VigilanteService vigilanteEntrada;
+	@Qualifier("vigilanteService")
+	private VigilanteService vigilante;
 	
 	@PostMapping("/addVehiculo")
 	public void addVehiculo(@RequestBody VehiculoModel vehiculoModel) {
 		
-		vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
+		vigilante.agregarVehiculo(vehiculoModel, PARQUEADERO);
 		
 		/*LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
 		if(vigilanteEntrada.verificarPlaca(vehiculoModel, dia) && vigilanteEntrada.verificarDisponibilidad(CARRO)) {		
