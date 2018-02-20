@@ -12,36 +12,36 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.parqueadero.Taller2Application;
+import com.parqueadero.ParqueaderoApplication;
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.ParqueaderoRepository;
-import com.parqueadero.services.VigilanteService;
 import com.parqueadero.services.impl.VigilanteServiceImpl;
 
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=Taller2Application.class)
+@SpringBootTest(classes=ParqueaderoApplication.class)
 public class MeterVehiculoTest {
 	
 	@Autowired
-	VigilanteServiceImpl vigilante;
+	@Qualifier("vigilanteService")
+	private VigilanteServiceImpl vigilante;
 	
 	@Autowired
-	FacturaReposiory facturaReposiory;
+	@Qualifier("facturaReposiory")
+	private FacturaReposiory facturaReposiory;
 	
 	@Autowired
-	ParqueaderoRepository parqueaderoRepository;
-	
-	private static final Log LOG = LogFactory.getLog(VigilanteServiceImpl.class);
+	@Qualifier("parqueaderoRepository")
+	private ParqueaderoRepository parqueaderoRepository;
+
 	private static final String CARRO = "Carro";
 	private static final String MOTO = "Moto";
 	private static final int ID_PARQUEADERO = 1;
