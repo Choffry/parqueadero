@@ -29,15 +29,15 @@ import com.parqueadero.services.impl.VigilanteServiceImpl;
 public class MeterVehiculoTest {
 	
 	@Autowired
-	@Qualifier("vigilanteService")
+	//@Qualifier("vigilanteService")
 	private VigilanteServiceImpl vigilante;
 	
 	@Autowired
-	@Qualifier("facturaReposiory")
+	//@Qualifier("facturaReposiory")
 	private FacturaReposiory facturaReposiory;
 	
 	@Autowired
-	@Qualifier("parqueaderoRepository")
+	//@Qualifier("parqueaderoRepository")
 	private ParqueaderoRepository parqueaderoRepository;
 
 	private static final String CARRO = "Carro";
