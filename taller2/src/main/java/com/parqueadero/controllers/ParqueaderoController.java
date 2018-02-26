@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.parqueadero.models.Calendario;
+import com.parqueadero.models.FacturaModel;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.services.VigilanteService;
@@ -51,10 +54,10 @@ public class ParqueaderoController {
 	
 	}
 	
-	@PostMapping("/outVehiculo")
-	public void outVehiculo(@RequestBody VehiculoModel vehiculoModel) {
+	@PutMapping("/outVehiculo")
+	public FacturaModel outVehiculo(@RequestBody VehiculoModel vehiculoModel) {
 		LOG.info("METHOD: outVehiculo() inicializado");
-		vigilante.sacarVehiculo(vehiculoModel, PARQUEADERO);
+		return vigilante.sacarVehiculo(vehiculoModel, PARQUEADERO);
 	}
 	
 	@GetMapping("/listVehiculo")

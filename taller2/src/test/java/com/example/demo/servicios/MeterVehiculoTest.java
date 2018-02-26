@@ -2,6 +2,7 @@ package com.example.demo.servicios;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -11,7 +12,6 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -165,29 +165,6 @@ public class MeterVehiculoTest {
 		facturaReposiory.delete(factura);
 	}
 	
-	@Test
-	public void testPasarDeDateAHorasConMinuosAdicionales() {
-		
-		@SuppressWarnings("deprecation")
-		Date fecha = new Date(2018, 9, 6, 3, 5);
-		Long answer = (long) 17082489;
-		
-		Long resultado = vigilante.date2hours(fecha);
-		
-		assertEquals(answer, resultado);
-	}
-	
-	@Test
-	public void testPasarDeDateAHorasSinMinuosAdicionales() {
-		
-		@SuppressWarnings("deprecation")
-		Date fecha = new Date(2018, 9, 6, 3, 0);
-		Long answer = (long) 17082488;
-		
-		Long resultado = vigilante.date2hours(fecha);
-		
-		assertEquals(answer, resultado);
-	}
 	
 	@Test
 	public void testTiempoDeEstadiaEnElParqueaderoConDiferenciaDeMinutos() {
@@ -364,9 +341,9 @@ public class MeterVehiculoTest {
 		
 		vigilante.actualizarFactura(factura, fechaSalida, 5000);
 		
-		boolean resultado = factura.isEstado();
+		Date resultado = factura.getHoraSalida();
 		
-		assertFalse(resultado);
+		assertNotNull(resultado);
 		
 		facturaReposiory.delete(factura);
 	}

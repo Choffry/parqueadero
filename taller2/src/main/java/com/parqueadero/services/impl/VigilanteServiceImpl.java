@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
+import com.parqueadero.models.FacturaModel;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.FacturaReposiory;
@@ -70,7 +71,9 @@ public class VigilanteServiceImpl implements VigilanteService{
 	}
 	
 	@Override
-	public void sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+	public FacturaModel sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+				
+		LOG.info("METHOD: sacarVehiculo() inicializado");
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		Date horaSalida = new Date();
 		
@@ -79,7 +82,9 @@ public class VigilanteServiceImpl implements VigilanteService{
 		
 		int precio = precioTotal(factura, parqueadero);
 		
-		actualizarFactura(factura, horaSalida, precio);
+		FacturaEntity facturaActualizada = actualizarFactura(factura, horaSalida, precio);
+		
+		LOG.info("Con la factura actualizada. " + facturaActualizada);
 		
 		if(factura.getTipoVehiculo().equals(CARRO)) {
 			parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+1);
@@ -88,6 +93,10 @@ public class VigilanteServiceImpl implements VigilanteService{
 		}
 		
 		parqueaderoRepository.save(parqueadero);
+		
+		LOG.info(facturaReposiory.entity2model(facturaActualizada));
+		
+		return facturaReposiory.entity2model(facturaActualizada);
 	}
 	
 	@Override
@@ -183,33 +192,30 @@ public class VigilanteServiceImpl implements VigilanteService{
 		return facturaReposiory.findByPlacaAndEstado(placa, true);
 	}
 	
-	public void actualizarFactura(FacturaEntity facturaEntity, Date horaSalida, int pagoTotal) {
-		facturaEntity.setEstado(false);
+	public FacturaEntity actualizarFactura(FacturaEntity facturaEntity, Date horaSalida, int pagoTotal) {		
 		facturaEntity.setHoraSalida(horaSalida);
+		facturaEntity.setEstado(false);
 		facturaEntity.setPagoTotal(pagoTotal);
 		facturaReposiory.save(facturaEntity);
+		return facturaEntity;
 	}
 	
 	public int horasDeEstadia(Date fechaEntrada, Date fechaSalida) {
 		LOG.info("METHOD: tiempoEstadia() -- PARAMS: fecha entrada" + fechaEntrada);
 		LOG.info("METHOD: tiempoEstadia() -- PARAMS: fecha salida" + fechaSalida);
-		Long fechaEnHorasIngreso = date2hours(fechaEntrada);
-		Long fechaEnHorasSalida = date2hours(fechaSalida);
-		return fechaEnHorasSalida.intValue() - fechaEnHorasIngreso.intValue();
+		Long fechaEntradaMilisegundos = fechaEntrada.getTime();
+		Long fechaSalidaMilisegundos = fechaSalida.getTime();
+		Long horasAdentro = (fechaSalidaMilisegundos - fechaEntradaMilisegundos)/MILISEGUNDOS_EN_HORA;
+		
+		Long horasModulo = (fechaSalidaMilisegundos - fechaEntradaMilisegundos)%MILISEGUNDOS_EN_HORA;
+		
+		if(horasModulo != 0) {
+			horasAdentro++;
+		}
+		
+		return horasAdentro.intValue();
+		
 	}
 	
-	public Long date2hours(Date fecha) {
-		LOG.info("METHOD: date2hours() inicia");
-		Long fechaEnHoras;
-		Long fechaEnMilisegundos = fecha.getTime();
-		if(fechaEnMilisegundos%MILISEGUNDOS_EN_HORA == 0){
-			fechaEnHoras = fechaEnMilisegundos/MILISEGUNDOS_EN_HORA;
-		}else {
-			fechaEnHoras = (fechaEnMilisegundos/MILISEGUNDOS_EN_HORA) + 1;
-		}
-		LOG.info("METHOD: date2hours() -- PARAMS: fecha en milisegundos:" + fechaEnMilisegundos);
-		LOG.info("METHOD: date2hours() -- PARAMS: fecha en horas:" + fechaEnHoras);
-		return fechaEnHoras;
-	}
-
+	
 }

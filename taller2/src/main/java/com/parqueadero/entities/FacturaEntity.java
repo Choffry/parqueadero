@@ -56,8 +56,8 @@ public class FacturaEntity {
 		return idFactura;
 	}
 
-	public void setIdFactura(int idRegistro) {
-		this.idFactura = idRegistro;
+	public void setIdFactura(int idFactura) {
+		this.idFactura = idFactura;
 	}
 
 	public String getTipoVehiculo() {
@@ -115,4 +115,6 @@ public class FacturaEntity {
 	public void setPagoTotal(int pagoTotal) {
 		this.pagoTotal = pagoTotal;
 	}
+
+	
 }
