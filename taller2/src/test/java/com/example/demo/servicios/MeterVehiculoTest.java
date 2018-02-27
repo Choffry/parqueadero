@@ -9,48 +9,70 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.parqueadero.ParqueaderoApplication;
 import com.parqueadero.entities.FacturaEntity;
 import com.parqueadero.entities.ParqueaderoEntity;
+import com.parqueadero.exception.ExceptionValidaciones;
 import com.parqueadero.models.VehiculoModel;
 import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.ParqueaderoRepository;
 import com.parqueadero.services.impl.VigilanteServiceImpl;
+import com.parqueadero.validators.entrada.PlacaIniciaPorA;
+import com.parqueadero.validators.entrada.ValidacionesEntrada;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=ParqueaderoApplication.class)
+@Transactional
 public class MeterVehiculoTest {
 	
 	@Autowired
-	//@Qualifier("vigilanteService")
+	@Qualifier("vigilanteService")
 	private VigilanteServiceImpl vigilante;
-	
+		
 	@Autowired
-	//@Qualifier("facturaReposiory")
+	@Qualifier("facturaReposiory")
 	private FacturaReposiory facturaReposiory;
 	
 	@Autowired
-	//@Qualifier("parqueaderoRepository")
+	@Qualifier("parqueaderoRepository")
 	private ParqueaderoRepository parqueaderoRepository;
 
 	private static final String CARRO = "Carro";
 	private static final String MOTO = "Moto";
 	private static final int ID_PARQUEADERO = 1;
 
+	@After
+	public void clean() {
+		
+		facturaReposiory.deleteAll();
+		
+	    ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
+	    parqueadero.setNumCeldasCarro(20);
+	    parqueadero.setNumCeldasMoto(10);
+	    parqueaderoRepository.save(parqueadero);
+	}
+	
+	
 	@Test
 	public void testVerificarPlacaQueEmpiezaPorAyEsunDiaHabil() {
+		
+		ValidacionesEntrada validacionInicaA = new PlacaIniciaPorA();
+		PlacaIniciaPorA validacion = (PlacaIniciaPorA) validacionInicaA;
 		
 		VehiculoModel vehiculoModel = new VehiculoModel();
 		vehiculoModel.setPlaca("AAA111");
 		
-		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.MONDAY);
+		boolean placaIniciaPorA = validacion.verificarPlaca(vehiculoModel, Calendar.MONDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
@@ -58,10 +80,13 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueEmpiezaPorAyNoEsunDiaHabil() {
 		
+		ValidacionesEntrada validacionInicaA = new PlacaIniciaPorA();
+		PlacaIniciaPorA validacion = (PlacaIniciaPorA) validacionInicaA;
+		
 		VehiculoModel vehiculoModel = new VehiculoModel();
 		vehiculoModel.setPlaca("AAA111");
 		
-		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
+		boolean placaIniciaPorA = validacion.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
 		
 		assertFalse(placaIniciaPorA);
 	}
@@ -69,10 +94,13 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueNoEmpiezaPorAYEsunDiaHabil() {
 		
+		ValidacionesEntrada validacionInicaA = new PlacaIniciaPorA();
+		PlacaIniciaPorA validacion = (PlacaIniciaPorA) validacionInicaA;
+		
 		VehiculoModel vehiculoModel = new VehiculoModel();
 		vehiculoModel.setPlaca("BAA111");
 		
-		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.MONDAY);
+		boolean placaIniciaPorA = validacion.verificarPlaca(vehiculoModel, Calendar.MONDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
@@ -80,37 +108,54 @@ public class MeterVehiculoTest {
 	@Test
 	public void testVerificarPlacaQueNoEmpiezaPorAYNoEsunDiaHabil() {
 		
+		ValidacionesEntrada validacionInicaA = new PlacaIniciaPorA();
+		PlacaIniciaPorA validacion = (PlacaIniciaPorA) validacionInicaA;
+		
 		VehiculoModel vehiculoModel = new VehiculoModel();
 		vehiculoModel.setPlaca("BAA111");
 		
-		boolean placaIniciaPorA = vigilante.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
+		boolean placaIniciaPorA = validacion.verificarPlaca(vehiculoModel, Calendar.WEDNESDAY);
 		
 		assertTrue(placaIniciaPorA);
 	}
 	
-	@Test
-	public void testVerificarCeldasDisponiblesParaEnCarro() {
+	@Test(expected = ExceptionValidaciones.class)
+	public void testCarroYaIngresado() {
 		
-		VehiculoModel vehiculoModel = new VehiculoModel();
-		vehiculoModel.setPlaca("PPP456");
-		vehiculoModel.setTipoVehiculo(CARRO);
+		VehiculoModel vehiculoModel = new VehiculoModel("PAA123", CARRO, true, 0);
 		
-		int respuesta = vigilante.numCeldasParqueadero(ID_PARQUEADERO, vehiculoModel.getTipoVehiculo());
+		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
+		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);		
 		
-		assertEquals(20,  respuesta);
 	}
 	
-	@Test
+	@Test(expected = ExceptionValidaciones.class)
+	public void testVerificarCeldasDisponiblesParaEnCarro() {
+		
+		for(int i = 0; i<11; i++) {
+			
+			VehiculoModel vehiculoModel = new VehiculoModel("AAA12"+i, CARRO, true, 0);
+			VehiculoModel vehiculoModel2 = new VehiculoModel("AAA13"+i, CARRO, true, 0);
+			
+			vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
+			vigilante.agregarVehiculo(vehiculoModel2, ID_PARQUEADERO);
+		}
+		
+		facturaReposiory.deleteAllInBatch();	
+		
+	}
+	
+	@Test(expected = ExceptionValidaciones.class)
 	public void testVerificarCeldasDisponiblesEnMoto() {
 		
-		VehiculoModel vehiculoModel = new VehiculoModel();
-		vehiculoModel.setPlaca("PPP456");
-		vehiculoModel.setCilindraje(300);
-		vehiculoModel.setTipoVehiculo(MOTO);
-		
-		int respuesta =  vigilante.numCeldasParqueadero(ID_PARQUEADERO, vehiculoModel.getTipoVehiculo());
-		
-		assertEquals(10, respuesta);
+		for(int i = 0; i<10; i++) {
+			
+			VehiculoModel vehiculoModel = new VehiculoModel("AAA12"+i, MOTO, true, 300);
+			VehiculoModel vehiculoModel2 = new VehiculoModel("AAA13"+i, MOTO, true, 300);
+			
+			vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
+			vigilante.agregarVehiculo(vehiculoModel2, ID_PARQUEADERO);
+		}
 	}
 	
 	@Test
@@ -125,7 +170,6 @@ public class MeterVehiculoTest {
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);	
 		assertTrue(null != factura);
 		
-		facturaReposiory.delete(factura);
 	}
 	
 	@Test
@@ -140,10 +184,6 @@ public class MeterVehiculoTest {
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
 		assertEquals(CARRO, factura.getTipoVehiculo());
 		
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
-		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+1);
-		parqueaderoRepository.save(parqueadero);
-		facturaReposiory.delete(factura);
 	}
 	
 	@Test
@@ -159,10 +199,6 @@ public class MeterVehiculoTest {
 		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("PPP456", true);
 		assertEquals(MOTO, factura.getTipoVehiculo());
 		
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
-		parqueadero.setNumCeldasMoto(parqueadero.getNumCeldasMoto()+1);
-		parqueaderoRepository.save(parqueadero);
-		facturaReposiory.delete(factura);
 	}
 	
 	
@@ -345,7 +381,6 @@ public class MeterVehiculoTest {
 		
 		assertNotNull(resultado);
 		
-		facturaReposiory.delete(factura);
 	}
 	
 	@Test
@@ -365,19 +400,8 @@ public class MeterVehiculoTest {
 		List<VehiculosAdentro> vehiculos = vigilante.listarTodosLosVehiculos();
 		int resultado =  vehiculos.size();
 		
-		assertEquals(2, resultado);
+		assertEquals(2, resultado);			
 		
-		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
-		facturaReposiory.delete(factura);
-		
-		factura = facturaReposiory.findByPlacaAndEstado("IAP587", true);
-		facturaReposiory.delete(factura);
-		
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(ID_PARQUEADERO);
-		
-		parqueadero.setNumCeldasCarro(parqueadero.getNumCeldasCarro()+2);
-		
-		parqueaderoRepository.save(parqueadero);
 	}
 	
 //ParqueaderoEntity parqueaderoEntity = new ParqueaderoEntity(1, 20, 10, 8000, 4000, 1000, 500);

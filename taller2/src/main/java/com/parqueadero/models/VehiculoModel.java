@@ -3,7 +3,6 @@ package com.parqueadero.models;
 
 public class VehiculoModel {
 	
-	private int idVehiculo;
 	private String placa;
 	private String tipoVehiculo;
     private boolean estado;
@@ -13,21 +12,12 @@ public class VehiculoModel {
 		super();
 	}
 
-	public VehiculoModel(int idVehiculo, String placa, String tipoVehiculo, boolean estado, int cilindraje) {
+	public VehiculoModel(String placa, String tipoVehiculo, boolean estado, int cilindraje) {
 		super();
-		this.idVehiculo = idVehiculo;
 		this.placa = placa;
 		this.tipoVehiculo = tipoVehiculo;
 		this.estado = estado;
 		this.cilindraje = cilindraje;
-	}
-
-	public int getIdVehiculo() {
-		return idVehiculo;
-	}
-
-	public void setIdVehiculo(int idVehiculo) {
-		this.idVehiculo = idVehiculo;
 	}
 
 	public void setPlaca(String placa) {
@@ -61,9 +51,5 @@ public class VehiculoModel {
 	public void setCilindraje(int cilindraje) {
 		this.cilindraje = cilindraje;
 	}
-	
-	
-	//public abstract int getCilindraje();
-	
-	//public abstract void parquearVehiculo(ParqueaderoEntity parqueadero, VehiculoModel vehiculoModel);
+		
 }

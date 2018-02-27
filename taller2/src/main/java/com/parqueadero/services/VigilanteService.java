@@ -10,9 +10,7 @@ import com.parqueadero.models.VehiculosAdentro;
 
 public interface VigilanteService {
 	
-	public boolean verificarPlaca(VehiculoModel vehiculoModel, int dia);
 	void agregarVehiculo(VehiculoModel vehiculoModel, int idParqueadero);
-	boolean verificarDisponibilidad(String tipoVehiculo);
 	void comenzarFactura(VehiculoModel vehiculoModel);
 	FacturaModel sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero);
 	List<VehiculosAdentro> listarTodosLosVehiculos();

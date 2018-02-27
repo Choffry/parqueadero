@@ -18,13 +18,12 @@ import com.parqueadero.models.VehiculosAdentro;
 import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.ParqueaderoRepository;
 import com.parqueadero.services.VigilanteService;
+import com.parqueadero.validators.entrada.ValidacionesEntrada;
 
 @Service("vigilanteService")
 public class VigilanteServiceImpl implements VigilanteService{
 	
 	private static final Log LOG = LogFactory.getLog(VigilanteServiceImpl.class);
-	private static final int DOMINGO = 1;
-	private static final int LUNES = 2;
 	private static final String CARRO = "Carro";
 	private static final int MAX_CILINDRAJE = 500;
 	private static final int ADDICION_CILINDRAJE = 2000;
@@ -39,9 +38,18 @@ public class VigilanteServiceImpl implements VigilanteService{
 	@Autowired
 	@Qualifier("parqueaderoRepository")
 	private ParqueaderoRepository parqueaderoRepository;
+	
+	List<ValidacionesEntrada> validacionesEntrada;
+	
+	@Autowired
+	public VigilanteServiceImpl(List<ValidacionesEntrada> validacionesEntrada) {
+		this.validacionesEntrada = validacionesEntrada;
+	}
 
 	@Override
 	public void agregarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+		
+		validacionesEntrada.stream().forEach(validacion -> validacion.validar(vehiculoModel));
 		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		
@@ -54,28 +62,14 @@ public class VigilanteServiceImpl implements VigilanteService{
 		parqueaderoRepository.save(parqueadero);
 		comenzarFactura(vehiculoModel);
 		
-		/*LOG.info("METHOD: addContact() -- PARAMS: " + vehiculoModel.toString());
-		if(vigilanteEntrada.verificarPlaca(vehiculoModel, dia) && vigilanteEntrada.verificarDisponibilidad(CARRO)) {		
-			vigilanteEntrada.addVehiculo(vehiculoModel, PARQUEADERO);
-			//LOG.info("Carro ingresado");
-		}else {
-			//LOG.info("Acceso denegado");
-		}*/
-		
-		/*LOG.info("METHOD: addVehiculo() inicia");
-		
-		vehiculoModel.parquearVehiculo(parqueadero, vehiculoModel);
-		
-		LOG.info("termina");
-		*/
 	}
 	
 	@Override
 	public FacturaModel sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
 				
-		LOG.info("METHOD: sacarVehiculo() inicializado");
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
 		Date horaSalida = new Date();
+		
+		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);		
 		
 		FacturaEntity factura = buscarfactura(vehiculoModel);
 		factura.setHoraSalida(horaSalida);
@@ -111,41 +105,21 @@ public class VigilanteServiceImpl implements VigilanteService{
 		return vehiculosAdentro;
 	}
 	
-	@Override
-	public boolean verificarPlaca(VehiculoModel vehiculoModel, int dia){
-		String placa = vehiculoModel.getPlaca();
-        char primeraLetra = placa.charAt(0);
-        if (primeraLetra == 'A') { 
-        	return (DOMINGO == dia) || (LUNES == dia);        	
-        }
-        return true;
-    }
 	
-	@Override
-	public boolean verificarDisponibilidad(String tipoVehiculo) {
-		return (numCeldasParqueadero(1, tipoVehiculo)!=0);
-	}
-	
-	public int numCeldasParqueadero(int idParqueadero, String tipoVehiculo) {		
-		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);
-		if(CARRO.equals(tipoVehiculo)) {
-			return parqueadero.getNumCeldasCarro();
-		}else {
-			return parqueadero.getNumCeldasMoto();
-		}
-		
-	}
 	
 	@Override
 	public void comenzarFactura(VehiculoModel vehiculoModel) {
-		String tipoVehiculo = vehiculoModel.getTipoVehiculo(); 
+ 
 		Date fechaEntrada = new Date();
+		
 		FacturaEntity factura = new FacturaEntity();
+		
 		factura.setEstado(true);
 		factura.setPlaca(vehiculoModel.getPlaca());
-		factura.setTipoVehiculo(tipoVehiculo);
+		factura.setTipoVehiculo(vehiculoModel.getTipoVehiculo());
 		factura.setCilindraje(vehiculoModel.getCilindraje());
 		factura.setHoraIngreso(fechaEntrada);
+		
 		facturaReposiory.save(factura);
 	}
 
