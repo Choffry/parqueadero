@@ -12,6 +12,8 @@ import com.parqueadero.validators.entrada.CeldasDisponibles;
 import com.parqueadero.validators.entrada.PlacaIniciaPorA;
 import com.parqueadero.validators.entrada.ValidacionesEntrada;
 import com.parqueadero.validators.entrada.VehiculoYaIngresado;
+import com.parqueadero.validators.salida.ValidacionesSalida;
+import com.parqueadero.validators.salida.VehiculoNoExiste;
 
 @Configuration	
 public class Validaciones {
@@ -23,6 +25,12 @@ public class Validaciones {
 		validaciones.add(new PlacaIniciaPorA());
 		validaciones.add(new VehiculoYaIngresado(facturaReposiory));
 		return validaciones;
+	}
+	
+	@Bean List<ValidacionesSalida> listValidacionesSalida(FacturaReposiory facturaReposiory){
+		List<ValidacionesSalida> validaciones = new ArrayList<>();
+		validaciones.add(new VehiculoNoExiste(facturaReposiory));		
+		return validaciones;		
 	}
 	
 }

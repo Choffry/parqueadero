@@ -19,6 +19,7 @@ import com.parqueadero.repositories.FacturaReposiory;
 import com.parqueadero.repositories.ParqueaderoRepository;
 import com.parqueadero.services.VigilanteService;
 import com.parqueadero.validators.entrada.ValidacionesEntrada;
+import com.parqueadero.validators.salida.ValidacionesSalida;
 
 @Service("vigilanteService")
 public class VigilanteServiceImpl implements VigilanteService{
@@ -40,10 +41,12 @@ public class VigilanteServiceImpl implements VigilanteService{
 	private ParqueaderoRepository parqueaderoRepository;
 	
 	List<ValidacionesEntrada> validacionesEntrada;
+	List<ValidacionesSalida> validacionesSalida;
 	
 	@Autowired
-	public VigilanteServiceImpl(List<ValidacionesEntrada> validacionesEntrada) {
+	public VigilanteServiceImpl(List<ValidacionesEntrada> validacionesEntrada, List<ValidacionesSalida> validacionesSalida) {
 		this.validacionesEntrada = validacionesEntrada;
+		this.validacionesSalida = validacionesSalida;
 	}
 
 	@Override
@@ -66,8 +69,13 @@ public class VigilanteServiceImpl implements VigilanteService{
 	
 	@Override
 	public FacturaModel sacarVehiculo(VehiculoModel vehiculoModel, int idParqueadero) {
+		
+		LOG.info("comienza la verificacion");
 				
 		Date horaSalida = new Date();
+		
+		validacionesSalida.stream().forEach(validacion -> validacion.validar(vehiculoModel));
+		LOG.info("sale de la verificacion");
 		
 		ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(idParqueadero);		
 		

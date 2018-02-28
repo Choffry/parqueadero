@@ -26,7 +26,6 @@ public class VehiculoYaIngresado implements ValidacionesEntrada {
 	}
 	
 	public boolean yaIngresoElVehiculo(String placa) {
-		
 		return (facturaReposiory.findByPlacaAndEstado(placa, true) != null);
 	}
 

@@ -10,13 +10,9 @@ public class FacturaModel {
 	private int pagoTotal;
 	private String placa;
 	
-	public FacturaModel() {
-		
-	}
 	
-	public FacturaModel(int idFactura, int cilindraje, Date horaIngreso, Date horaSalida, int pagoTotal, String placa,
-			String tipoVehiculo) {
-		super();
+	public FacturaModel(int cilindraje, Date horaIngreso, Date horaSalida, int pagoTotal, String placa) {
+		
 		this.cilindraje = cilindraje;
 		this.horaIngreso = horaIngreso;
 		this.horaSalida = horaSalida;

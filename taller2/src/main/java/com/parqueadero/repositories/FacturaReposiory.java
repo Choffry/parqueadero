@@ -17,13 +17,13 @@ public interface FacturaReposiory extends JpaRepository<FacturaEntity, Serializa
 	
 	public default FacturaModel entity2model(FacturaEntity facturaEntity) {
 		
-		FacturaModel facturaModel = new FacturaModel();
-		facturaModel.setPlaca(facturaEntity.getPlaca());
-		facturaModel.setHoraIngreso(facturaEntity.getHoraIngreso());
-		facturaModel.setHoraSalida(facturaEntity.getHoraSalida());
-		facturaModel.setPagoTotal(facturaEntity.getPagoTotal());
-		facturaModel.setCilindraje(facturaEntity.getCilindraje());
-		
-		return facturaModel;		
+		return new FacturaModel(
+				facturaEntity.getCilindraje(),
+				facturaEntity.getHoraIngreso(),
+				facturaEntity.getHoraSalida(),
+				facturaEntity.getPagoTotal(),
+				facturaEntity.getPlaca()
+				);
+			
 	}
 }

@@ -14,7 +14,7 @@ public class CeldasDisponibles implements ValidacionesEntrada{
 	@Qualifier("parqueaderoRepository")
 	ParqueaderoRepository parqueaderoRepository;
 	
-	private static final String CARRO = "Carro";	
+	private static final String CARRO = "Carro";
 	
 	public CeldasDisponibles(ParqueaderoRepository parqueaderoRepository) {
 		super();
@@ -23,9 +23,11 @@ public class CeldasDisponibles implements ValidacionesEntrada{
 
 	@Override
 	public void validar(VehiculoModel vehiculoModel) {
+		
+		String tipoVehiculo = vehiculoModel.getTipoVehiculo();
 
-		if(numCeldasParqueadero(1, vehiculoModel.getTipoVehiculo()) <= 0) {
-			throw new ExceptionValidaciones("CUPOS DE CARROS LLENO");
+		if(numCeldasParqueadero(1, tipoVehiculo) <= 0) {
+			throw new ExceptionValidaciones("Cupos de " + vehiculoModel.getTipoVehiculo() + " lleno");
 		}
 	}
 	
