@@ -32,6 +32,9 @@ public class VigilanteServiceImpl implements VigilanteService{
 	private static final int HORAS_MAX = 9;
 	private static final int MILISEGUNDOS_EN_HORA = 3600000;
 	
+	List<ValidacionesEntrada> validacionesEntrada;
+	List<ValidacionesSalida> validacionesSalida;
+	
 	@Autowired
 	@Qualifier("facturaReposiory")
 	private FacturaReposiory facturaReposiory;
@@ -39,9 +42,6 @@ public class VigilanteServiceImpl implements VigilanteService{
 	@Autowired
 	@Qualifier("parqueaderoRepository")
 	private ParqueaderoRepository parqueaderoRepository;
-	
-	List<ValidacionesEntrada> validacionesEntrada;
-	List<ValidacionesSalida> validacionesSalida;
 	
 	@Autowired
 	public VigilanteServiceImpl(List<ValidacionesEntrada> validacionesEntrada, List<ValidacionesSalida> validacionesSalida) {

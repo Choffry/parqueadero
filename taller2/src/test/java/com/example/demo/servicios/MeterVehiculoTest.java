@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class MeterVehiculoTest {
 	@After
 	public void clean() {
 		
-		facturaReposiory.deleteAll();
+		facturaReposiory.deleteAll();		
 		
 	    ParqueaderoEntity parqueadero = parqueaderoRepository.findByIdParqueadero(1);
 	    parqueadero.setNumCeldasCarro(20);
@@ -119,15 +120,22 @@ public class MeterVehiculoTest {
 		assertTrue(placaIniciaPorA);
 	}
 	
-	@Test(expected = ExceptionValidaciones.class)
+	@Test
 	public void testCarroYaIngresado() {
 		
 		VehiculoModel vehiculoModel = new VehiculoModel("PAA123", CARRO, true, 0);
 		
 		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
-		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);		
 		
+		try {
+			vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
+			fail();
+		} catch (ExceptionValidaciones e) {
+			assertEquals("El vehiculo ya se encuentra adentro", e.getMessage());
+		}
+								
 	}
+	
 	
 	@Test(expected = ExceptionValidaciones.class)
 	public void testVerificarCeldasDisponiblesParaEnCarro() {
@@ -167,8 +175,10 @@ public class MeterVehiculoTest {
 		
 		vigilante.comenzarFactura(vehiculoModel);
 		
-		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);	
-		assertTrue(null != factura);
+		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
+		assertEquals(vehiculoModel.getPlaca(), factura.getPlaca());
+		assertEquals(vehiculoModel.getTipoVehiculo(),factura.getTipoVehiculo());
+		//assertTrue(null != factura);
 		
 	}
 	
@@ -176,12 +186,12 @@ public class MeterVehiculoTest {
 	public void testVerificarIngresoDeCarroAlParqueadero() {
 		
 		VehiculoModel vehiculoModel = new VehiculoModel();
-		vehiculoModel.setPlaca("IAP588");
+		vehiculoModel.setPlaca("MMM588");
 		vehiculoModel.setTipoVehiculo(CARRO);
 		
 		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
 		
-		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("IAP588", true);
+		FacturaEntity factura = facturaReposiory.findByPlacaAndEstado("MMM588", true);
 		assertEquals(CARRO, factura.getTipoVehiculo());
 		
 	}
@@ -387,11 +397,11 @@ public class MeterVehiculoTest {
 	public void testListAllVehiculos() {
 		
 		VehiculoModel vehiculoModel = new VehiculoModel();
-		vehiculoModel.setPlaca("IAP588");
+		vehiculoModel.setPlaca("FHN064");
 		vehiculoModel.setTipoVehiculo(CARRO);
 		
 		VehiculoModel vehiculoModel2 = new VehiculoModel();
-		vehiculoModel2.setPlaca("IAP587");
+		vehiculoModel2.setPlaca("FHN063");
 		vehiculoModel2.setTipoVehiculo(CARRO);
 		
 		vigilante.agregarVehiculo(vehiculoModel, ID_PARQUEADERO);
@@ -400,7 +410,7 @@ public class MeterVehiculoTest {
 		List<VehiculosAdentro> vehiculos = vigilante.listarTodosLosVehiculos();
 		int resultado =  vehiculos.size();
 		
-		assertEquals(2, resultado);			
+		assertEquals(3, resultado);			
 		
 	}
 	
